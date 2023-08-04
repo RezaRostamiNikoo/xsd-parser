@@ -1,9 +1,8 @@
 import { mapToObject } from "../helpers";
 import { XsElementNode } from "./XsElementNode";
 
-export abstract class XsNode {
+export class XsNode {
     public static elements: Array<XsNode> = [];
-
 
     ///////////////////////////////////
     protected nodename: string;
@@ -26,6 +25,7 @@ export abstract class XsNode {
             this.attributes.set(node.attributes[i].name, node.attributes[i].value);
         }
     }
+
     private extractsChildren(node: Element) {
         if (!node.childNodes) return [];
         Array.from(node.childNodes).forEach((child: Element) => {
@@ -47,7 +47,6 @@ export abstract class XsNode {
             nodename: this.nodename,
             attributes: mapToObject(this.attributes),
             children: this.children.map(child => child.toJson())
-
         }
     }
 }
