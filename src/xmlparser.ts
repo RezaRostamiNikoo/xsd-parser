@@ -1,8 +1,8 @@
 import { DOMParser } from "@xmldom/xmldom";
-import { tags } from "./constant";
 
 import merge from "lodash/merge";
 import deepMerge from "deepmerge";
+import { RootNode } from "./node/RootNode";
 
 
 export class XmlParser {
@@ -10,13 +10,14 @@ export class XmlParser {
 
     }
 
-    parse(): Document {
+    parse(): RootNode {
         const parser = new DOMParser();
         const document = parser.parseFromString(this.text);
-        const nodename = "xs:complexContent";
-        console.log(`Attrs for ${nodename}`, JSON.stringify(this.getAnTagAllAttributes(document.documentElement, nodename)));
-        console.log(`Children for ${nodename}`, JSON.stringify(this.getAnTagAllChildren(document.documentElement, nodename)));
-        return document;
+        // const nodename = "xs:complexContent";
+        // console.log(`Attrs for ${nodename}`, JSON.stringify(this.getAnTagAllAttributes(document.documentElement, nodename)));
+        // console.log(`Children for ${nodename}`, JSON.stringify(this.getAnTagAllChildren(document.documentElement, nodename)));
+        const root: RootNode = new RootNode(document.documentElement);
+        return root;
     }
 
     private getChildren(node: Node): Array<ChildNode> {
@@ -60,10 +61,6 @@ export class XmlParser {
         return result;
     }
 
-
-
-
-
     getAttributes(node: Element): Object {
         const result: { [key: string]: any } = {};
         for (let i = 0; i < node.attributes.length; i++) {
@@ -74,9 +71,6 @@ export class XmlParser {
         }
         return result;
     }
-
-
-
 
     getAnTagAllChildren(node: Node, nodename: string) {
         let result = new Set();
