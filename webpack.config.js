@@ -3,21 +3,8 @@ const path = require("path");
 
 /** @type {import('webpack').Configuration} */
 module.exports = {
-    entry: "./src/index.ts",
     mode: "none",
-    devtool: 'inline-source-map',
-    output: {
-        filename: "index.js",
-        path: path.resolve(__dirname, "dist"),
-        library: {
-            type: "umd",
-            name: "XsdParser",
-            export: "default",
-        }
-    },
-    resolve: {
-        extensions: ["ts", "js"],
-    },
+    entry: "./src/index.ts",
     module: {
         rules: [
             {
@@ -26,5 +13,23 @@ module.exports = {
                 exclude: /node_modules/,
             }
         ]
+    },
+    devtool: 'source-map',
+    resolve: {
+        extensions: [".ts", ".js"],
+    },
+    output: {
+        path: path.resolve(__dirname, "dist"),
+        filename: "index.js",
+        library: {
+            name: {
+                root: 'XsdParser',
+                amd: 'XsdParser',
+                commonjs: 'XsdParser',
+            },
+            type: "umd",
+        },
+        // prevent error: `Uncaught ReferenceError: self is not define`
+        globalObject: "globalThis"
     }
 }

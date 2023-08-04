@@ -1,8 +1,5 @@
-import { XsNode } from "./XsNode";
+import { XsNode } from ".";
 
 export class XsElementNode extends XsNode {
 
-    constructor(node: Element) {
-        super(node);
-    }
 }

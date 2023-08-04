@@ -10,13 +10,18 @@ export class XmlParser {
 
     }
 
+    /**
+     * 
+     * @returns {RootNode} it return a RootNode
+     */
     parse(): RootNode {
         const parser = new DOMParser();
         const document = parser.parseFromString(this.text);
         // const nodename = "xs:complexContent";
         // console.log(`Attrs for ${nodename}`, JSON.stringify(this.getAnTagAllAttributes(document.documentElement, nodename)));
         // console.log(`Children for ${nodename}`, JSON.stringify(this.getAnTagAllChildren(document.documentElement, nodename)));
-        const root: RootNode = new RootNode(document.documentElement);
+        const root: RootNode = new RootNode();
+        root.setNode(document.documentElement);
         return root;
     }
 
