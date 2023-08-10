@@ -5,7 +5,8 @@ import deepMerge from "deepmerge";
 import { RootNode } from "./node/RootNode";
 
 
-export class XmlParser {
+export class Parser {
+
     constructor(private text: string) {
 
     }

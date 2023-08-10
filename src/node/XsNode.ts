@@ -1,4 +1,4 @@
-import { makeid, mapToObject } from "../helpers";
+import { makeid, mapToObject } from "../utils/helpers";
 import { factory } from "./Factory";
 
 export class XsNode {
