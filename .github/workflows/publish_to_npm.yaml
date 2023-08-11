@@ -2,7 +2,7 @@ name: "publish to the npm registry"
 
 on:
   pull_request:
-    branches: main
+    branches: master
 
 jobs:
   publish:
