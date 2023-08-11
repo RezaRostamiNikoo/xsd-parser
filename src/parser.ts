@@ -5,7 +5,7 @@ import deepMerge from "deepmerge";
 import { RootNode } from "./node/RootNode";
 
 
-export default class Parser {
+export class Parser {
 
     constructor(private text: string) {
     }
