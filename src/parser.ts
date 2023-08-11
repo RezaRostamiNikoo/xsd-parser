@@ -5,10 +5,9 @@ import deepMerge from "deepmerge";
 import { RootNode } from "./node/RootNode";
 
 
-export class Parser {
+export default class Parser {
 
     constructor(private text: string) {
-
     }
 
     /**
@@ -18,14 +17,22 @@ export class Parser {
     parse(): RootNode {
         const parser = new DOMParser();
         const document = parser.parseFromString(this.text);
-        // const nodename = "xs:complexContent";
-        // console.log(`Attrs for ${nodename}`, JSON.stringify(this.getAnTagAllAttributes(document.documentElement, nodename)));
-        // console.log(`Children for ${nodename}`, JSON.stringify(this.getAnTagAllChildren(document.documentElement, nodename)));
         const root: RootNode = new RootNode();
         root.setNode(document.documentElement);
         return root;
     }
 
+    attributesOf(tag: string) {
+        const parser = new DOMParser();
+        const document = parser.parseFromString(this.text);
+        console.log(`Attrs for ${tag}`, JSON.stringify(this.getAnTagAllAttributes(document.documentElement, tag)));
+        console.log(`Children for ${tag}`, JSON.stringify(this.getAnTagAllChildren(document.documentElement, tag)));
+    }
+    listOfTags(): Set<string> {
+        const parser = new DOMParser();
+        const document = parser.parseFromString(this.text);
+        return this.getListOfTags(document.documentElement);
+    }
     private getChildren(node: Node): Array<ChildNode> {
         if (!node.childNodes) return [];
         return Array.from(node.childNodes);
@@ -42,7 +49,7 @@ export class Parser {
         return result;
     }
 
-    getAnTagAllAttributes(node: Node, nodename: string) {
+    private getAnTagAllAttributes(node: Node, nodename: string) {
         let result = {
             "withChild": {},
             "withoutChild": {}
@@ -67,7 +74,7 @@ export class Parser {
         return result;
     }
 
-    getAttributes(node: Element): Object {
+    private getAttributes(node: Element): Object {
         const result: { [key: string]: any } = {};
         for (let i = 0; i < node.attributes.length; i++) {
             const attr = node.attributes[i] as Attr;
@@ -78,7 +85,7 @@ export class Parser {
         return result;
     }
 
-    getAnTagAllChildren(node: Node, nodename: string) {
+    private getAnTagAllChildren(node: Node, nodename: string) {
         let result = new Set();
         this.getChildren(node).forEach(child => {
             if (node.nodeName === nodename)
@@ -88,4 +95,17 @@ export class Parser {
         return Array.from(result);
     }
 
+    /**
+     * it return a set of tags that has been used in a document
+     */
+    private getListOfTags(node: Node): Set<string> {
+        const result: Set<string> = new Set();
+        this.getChildren(node).forEach(child => {
+            result.add(child.nodeName);
+            this.getListOfTags(child).forEach(tag => {
+                result.add(tag);
+            });
+        })
+        return result;
+    }
 }
