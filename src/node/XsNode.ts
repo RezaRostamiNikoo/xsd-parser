@@ -1,4 +1,5 @@
-import { makeid, mapToObject } from "../helpers";
+import { makeid } from "../utils/helpers";
+import { mapToObject } from "../utils/map";
 import { factory } from "./Factory";
 
 export class XsNode {
@@ -40,7 +41,7 @@ export class XsNode {
                 case "xs:attribute": this.children.push(this.createXsNode(child, "XsAttributeNode", XsNode.attributes)); break;
                 case "xs:simpleType": this.children.push(this.createXsNode(child, "XsSimpleTypeNode", XsNode.simpleTypes)); break;
                 case "xs:complexType": this.children.push(this.createXsNode(child, "XsComplexTypeNode", XsNode.complexTypes)); break;
-                
+
                 case "xs:attributeGroup": this.children.push(this.createXsNode(child, "XsAttributeGroupNode")); break;
                 case "xs:choice": this.children.push(this.createXsNode(child, "XsChoiceNode")); break;
                 case "xs:complexContent": this.children.push(this.createXsNode(child, "XsComplexContentNode")); break;

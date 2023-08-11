@@ -1,3 +1,3 @@
 export * from "./node";
 
-export * from "./xmlparser";
+export * from "./parser";

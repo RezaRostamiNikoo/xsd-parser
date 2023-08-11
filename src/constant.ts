@@ -7,7 +7,6 @@ export const tagsInLevelOne = [
     "xs:attribute", // 1
     "xs:attributeGroup", // 1
     "xs:group", // 1
-
 ]
 
 
