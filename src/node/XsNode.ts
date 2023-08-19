@@ -1,3 +1,4 @@
+import { NodeName } from "../types";
 import { makeid } from "../utils/helpers";
 import { mapToObject } from "../utils/map";
 import { factory } from "./Factory";
@@ -17,12 +18,14 @@ export class XsNode {
     protected prev: XsNode = null;
     protected siblings: Array<XsNode> = []
 
+    get Parent(): XsNode { return this.parent; }
+    get Children(): Array<XsNode> { return this.children; }
     setNode(node: Element): XsNode {
         this.nodename = node.nodeName;
         this.extractAttributes(node);
         this.extractsChildren(node);
 
-
+        this.checks();
         return this;
     }
 
@@ -36,7 +39,7 @@ export class XsNode {
     private extractsChildren(node: Element) {
         if (!node.childNodes) return [];
         Array.from(node.childNodes).forEach((child: Element) => {
-            switch (child.nodeName) {
+            switch (child.nodeName as NodeName) {
                 case "xs:element": this.children.push(this.createXsNode(child, "XsElementNode", XsNode.elements)); break;
                 case "xs:attribute": this.children.push(this.createXsNode(child, "XsAttributeNode", XsNode.attributes)); break;
                 case "xs:simpleType": this.children.push(this.createXsNode(child, "XsSimpleTypeNode", XsNode.simpleTypes)); break;
@@ -59,9 +62,41 @@ export class XsNode {
 
     private createXsNode(node: Element, elementName: string, map?: Map<string, XsNode>) {
         const element = factory(elementName).setNode(node);
+        element.parent = this;
         map?.set(element.name || makeid(), element);
         return element;
     }
+    /////////////////////////////////////////////
+
+    get name(): string {
+        return this.attributes.get("name");
+    }
+
+    /** 
+     * checks if node has any children at all or any children of nodetype, if represented
+     * @param {NodeName} nodetype node type to be checkd
+     * @returns it return 0 if node does not have any children or any children of nodeType, if represented
+     * */
+    hasChildren(nodetype?: NodeName): number {
+        if (nodetype)
+            return this.children.filter(c => c.nodename === nodetype).length;
+        return this.children.length
+    }
+    areAllChildren(nodeType: NodeName): boolean {
+        return this.children.every(c => c.nodename === nodeType);
+    }
+
+    isParent(nodeType: NodeName): boolean {
+        return this.parent.nodename === nodeType;
+    }
+
+
+    firstChild<T extends XsNode>(nodeType?: NodeName): T {
+        if (!nodeType) return this.children[0] as T;
+        return this.children.filter(c => c.nodename === nodeType)[0] as T;
+    }
+
+
 
     toJson(): object {
         return {
@@ -71,7 +106,12 @@ export class XsNode {
         }
     }
 
-    get name(): string {
-        return this.attributes.get("name");
+    checks(): boolean {
+        throw new Error("checks method should be defined");
+    }
+
+
+    toTsDefinition(): Object {
+        throw new Error(this.nodename + " | toTsDefinition method should be defined")
     }
 }
