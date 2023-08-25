@@ -1,4 +1,4 @@
-import { TsDefinition } from "../../../TsDefinitions";
+import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
 import { XsName } from "./XsName";
 import { XsType } from "./XsType";
 
@@ -6,7 +6,7 @@ export class XsNCName extends XsType {
     get Name(): string {
         return "NCName"
     }
-    toTsDefinition(): TsDefinition {
+    toTsDefinition(): TsSchema {
         return null;
     }
     type: string = "xs:ncname";

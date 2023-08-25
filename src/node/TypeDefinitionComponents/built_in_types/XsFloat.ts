@@ -1,11 +1,11 @@
-import { TsDefinition } from "../../../TsDefinitions";
+import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
 import { XsType } from "./XsType";
 
 export class XsFloat extends XsType {
 
     get Name(): string { return "float"; }
 
-    toTsDefinition(): TsDefinition { return null; }
+    toTsDefinition(): TsSchema { return null; }
 
     type: string = "xs:float";
 

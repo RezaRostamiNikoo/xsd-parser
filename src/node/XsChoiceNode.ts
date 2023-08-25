@@ -1,4 +1,4 @@
-import { TsDefinition } from "../TsDefinitions";
+import * as ts from "../typescriptDefinitions";
 import { XsElementNode } from "./DeclarationComponents";
 import { ITypeDefinition } from "./TypeDefinitionComponents/ITypeDefinition";
 import { XsNode } from "./XsNode";
@@ -23,9 +23,8 @@ export class XsChoiceNode extends XsNode implements ITypeDefinition {
     variety(): "atomic" | "list" | "union" {
         throw new Error("Method not implemented.");
     }
-    toTsDefinition(): TsDefinition {
-        
-        return TsDefinition.makeUnionType(this.children.map((e) => e.Name));
+    toTsDefinition(): ts.TsSchema {
+        return ts.makeUnionType(this.children.map((e) => e.Name));
     }
 
 

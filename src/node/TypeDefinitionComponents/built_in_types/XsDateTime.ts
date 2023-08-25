@@ -1,4 +1,4 @@
-import { TsDefinition } from "../../../TsDefinitions";
+import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
 import { XsType } from "./XsType";
 
 export class XsDateTime extends XsType {
@@ -10,7 +10,7 @@ export class XsDateTime extends XsType {
         return "atomic";
     }
 
-    toTsDefinition(): TsDefinition {
+    toTsDefinition(): TsSchema {
         throw new Error("Method not implemented.");
     }
 }

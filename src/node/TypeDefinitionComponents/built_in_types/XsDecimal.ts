@@ -1,4 +1,4 @@
-import { TsDefinition } from "../../../TsDefinitions";
+import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
 import { XsType } from "./XsType";
 
 export class XsDecimal extends XsType {
@@ -9,7 +9,7 @@ export class XsDecimal extends XsType {
         return "atomic";
     }
 
-    toTsDefinition(): TsDefinition { return null; }
+    toTsDefinition(): TsSchema { return null; }
 
 
 }

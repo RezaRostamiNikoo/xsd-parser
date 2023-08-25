@@ -1,4 +1,4 @@
-import { TsDefinition } from "../../../TsDefinitions";
+import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
 import { XsType } from "./XsType";
 
 export class XsDouble extends XsType {
@@ -8,6 +8,6 @@ export class XsDouble extends XsType {
     variety(): "atomic" | "list" | "union" {
         return "atomic";
     }
-    toTsDefinition(): TsDefinition { return null; }
+    toTsDefinition(): TsSchema { return null; }
 
 }

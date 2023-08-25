@@ -11183,7 +11183,6 @@
 			<xs:element ref="ifc:IfcWarpingMomentMeasure-wrapper" />
 		</xs:choice>
 	</xs:group>
-	<!-- enumeration type declarations (for ENUMERATION data type definitions) -->
 	<xs:simpleType name="IfcActionRequestTypeEnum">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="email" />

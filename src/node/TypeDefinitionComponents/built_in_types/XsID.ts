@@ -1,10 +1,10 @@
-import { TsDefinition } from "../../../TsDefinitions";
+import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
 import { XsNCName } from "./XsNCName";
 import { XsType } from "./XsType";
 
 export class XsID extends XsType {
     get Name(): string { return "ID"; }
-    toTsDefinition(): TsDefinition { return null; }
+    toTsDefinition(): TsSchema { return null; }
 
     type: string = "xs:ID";
     variety(): "atomic" | "list" | "union" {

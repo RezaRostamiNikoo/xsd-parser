@@ -1,4 +1,4 @@
-import { TsDefinition } from "../../../TsDefinitions";
+import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
 import { XsType } from "./XsType";
 
 export class XsBoolean extends XsType {
@@ -9,7 +9,7 @@ export class XsBoolean extends XsType {
         return "atomic";
     }
 
-    toTsDefinition(): TsDefinition {
+    toTsDefinition(): TsSchema {
         return null;
     }
 }

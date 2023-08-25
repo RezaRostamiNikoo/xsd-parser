@@ -1,10 +1,10 @@
-import { TsDefinition } from "../../../TsDefinitions";
+import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
 import { ITypeDefinition } from "../ITypeDefinition";
 import { XsType } from "./XsType";
 
 export class XsAnyType extends XsType {
     get Name(): string { return "anyTypre"; }
-    toTsDefinition(): TsDefinition {
+    toTsDefinition(): TsSchema {
         throw new Error("Method not implemented.");
     }
 

@@ -1,4 +1,4 @@
-import { TsDefinition } from "../../TsDefinitions";
+import * as ts from "../../typescriptDefinitions";
 
 export interface ITypeDefinition {
     get Name(): string;
@@ -7,7 +7,7 @@ export interface ITypeDefinition {
 
     variety(): "atomic" | "list" | "union";
 
-    toTsDefinition(): TsDefinition;
+    toTsDefinition(): ts.TsSchema;
 
 
 }   

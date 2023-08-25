@@ -1,12 +1,12 @@
 
-import { TsDefinition } from "../../../TsDefinitions";
+import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
 import { XsType } from "./XsType";
 
 export class XsInteger extends XsType {
     get Name(): string {
         return "integer"
     }
-    toTsDefinition(): TsDefinition {
+    toTsDefinition(): TsSchema {
         return null;
     }
     type: string = "xs:integer";

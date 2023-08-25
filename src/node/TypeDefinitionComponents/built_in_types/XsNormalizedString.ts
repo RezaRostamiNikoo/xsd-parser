@@ -1,11 +1,11 @@
-import { TsDefinition } from "../../../TsDefinitions";
+import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
 import { XsType } from "./XsType";
 
 export class XsNormalizedString extends XsType {
     get Name(): string {
         return "normalizedString"
     }
-    toTsDefinition(): TsDefinition {
+    toTsDefinition(): TsSchema {
         return null;
     }
     type: string = "xs:normalizedString";

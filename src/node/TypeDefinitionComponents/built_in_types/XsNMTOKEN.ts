@@ -1,11 +1,11 @@
-import { TsDefinition } from "../../../TsDefinitions";
+import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
 import { XsType } from "./XsType";
 
 export class XsNMTOKEN extends XsType {
     get Name(): string {
         return "NMTOKEN"
     }
-    toTsDefinition(): TsDefinition {
+    toTsDefinition(): TsSchema {
         return null;
     }
     type: string = "xs:NMTOKEN";

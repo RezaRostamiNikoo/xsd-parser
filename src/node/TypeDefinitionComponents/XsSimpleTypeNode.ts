@@ -1,4 +1,4 @@
-import { TsDefinition } from "../../TsDefinitions";
+import * as ts from "../../typescriptDefinitions";
 import { ExcessiveElementsException } from "../../errors";
 import { OnlyException } from "../../errors/OnlyException";
 import { XsEnumerationNode } from "../XsEnumerationNode";
@@ -66,21 +66,21 @@ export class XsSimpleTypeNode extends XsNode implements ITypeDefinition {
     unionWise(): boolean { return this.hasChildren("xs:union") === 1; }
 
 
-    toTsDefinition(): TsDefinition {
+    toTsDefinition(): ts.TsSchema {
         if (this.restrictionWise()) {
             const restrictionNode: XsRestrictionNode = this.firstChild("xs:restriction") as XsRestrictionNode;
 
             if (restrictionNode.areAllChildren("xs:enumeration")) {
                 // TODO: return a json fixed for this condition
-                return TsDefinition.makeEnum(
+                return ts.makeEnum(
                     this.Name,
                     restrictionNode.Children.map((c: XsEnumerationNode) => { return c.getValue() }));
             }
             if (!restrictionNode.hasChildren() || this.variety() === "atomic")
-                return TsDefinition.makeSimpleType(this.BaseTypeDefinition, this.Name);
+                return ts.makeSimpleType(this.BaseTypeDefinition, this.Name);
             else if (this.variety() === "list") {
                 const list = this.firstChild() as XsListNode;
-                return TsDefinition.makeArrayType(this.BaseTypeDefinition, this.Name);
+                return ts.makeArrayType(this.BaseTypeDefinition, this.Name);
             }
             else if (this.variety() === "union")
                 throw new Error("XsSimpleTypeNode.toTsDefinition | it should be defined in restrictionWise()");
@@ -91,17 +91,17 @@ export class XsSimpleTypeNode extends XsNode implements ITypeDefinition {
 
         if (!this.Name) {
             if (this.listWise()) {
-                return TsDefinition.makeArrayType(this.BaseTypeDefinition, this.Name);
+                return ts.makeArrayType(this.BaseTypeDefinition, this.Name);
             }
         }
         if (this.Name) {
             if (this.listWise()) {
                 const list = this.firstChild() as XsListNode;
-                return TsDefinition.makeArrayType(list.itemType(), this.Name);
+                return ts.makeArrayType(list.itemType(), this.Name);
             }
         }
 
-        else if (this.listWise()) return TsDefinition.makeArrayType(this.BaseTypeDefinition);
+        else if (this.listWise()) return ts.makeArrayType(this.BaseTypeDefinition);
         else if (this.unionWise()) throw new Error("XsSimpleTypeNode.toTsDefinition | it should be defined");
     }
 }
