@@ -1,4 +1,3 @@
-export * from "./XsType";
 export * from "./XsAnySimpleType";
 export * from "./XsAnyType";
 export * from "./XsAtomicType";
@@ -19,4 +18,3 @@ export * from "./XsNMTOKENS";
 export * from "./XsNormalizedString";
 export * from "./XsString";
 export * from "./XsToken";
-export * from "./XsType";

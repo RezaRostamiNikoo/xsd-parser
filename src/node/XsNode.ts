@@ -1,12 +1,13 @@
-import { NodeName } from "../types";
+import { NodeName } from "./types";
 import { makeid } from "../utils/helpers";
 import { mapToObject } from "../utils/map";
 import { factory } from "./Factory";
+import { ITypeDefinition } from "./TypeDefinitionComponents/ITypeDefinition";
 
-export class XsNode {
+export abstract class XsNode {
     public static elements: Map<string, XsNode> = new Map();
     public static attributes: Map<string, XsNode> = new Map();
-    public static simpleTypes: Map<string, XsNode> = new Map();
+    public static types: Map<string, ITypeDefinition> = new Map();
     public static complexTypes: Map<string, XsNode> = new Map();
 
     ///////////////////////////////////
@@ -20,6 +21,8 @@ export class XsNode {
 
     get Parent(): XsNode { return this.parent; }
     get Children(): Array<XsNode> { return this.children; }
+    get Name(): string { return this.attributes.get("name"); }
+
     setNode(node: Element): XsNode {
         this.nodename = node.nodeName;
         this.extractAttributes(node);
@@ -42,7 +45,7 @@ export class XsNode {
             switch (child.nodeName as NodeName) {
                 case "xs:element": this.children.push(this.createXsNode(child, "XsElementNode", XsNode.elements)); break;
                 case "xs:attribute": this.children.push(this.createXsNode(child, "XsAttributeNode", XsNode.attributes)); break;
-                case "xs:simpleType": this.children.push(this.createXsNode(child, "XsSimpleTypeNode", XsNode.simpleTypes)); break;
+                case "xs:simpleType": this.children.push(this.createXsNode(child, "XsSimpleTypeNode", XsNode.types)); break;
                 case "xs:complexType": this.children.push(this.createXsNode(child, "XsComplexTypeNode", XsNode.complexTypes)); break;
 
                 case "xs:attributeGroup": this.children.push(this.createXsNode(child, "XsAttributeGroupNode")); break;
@@ -60,17 +63,15 @@ export class XsNode {
         });
     }
 
-    private createXsNode(node: Element, elementName: string, map?: Map<string, XsNode>) {
+    private createXsNode(node: Element, elementName: string, map?: Map<string, any>) {
         const element = factory(elementName).setNode(node);
         element.parent = this;
-        map?.set(element.name || makeid(), element);
+        map?.set(element.Name || makeid(), element);
         return element;
     }
     /////////////////////////////////////////////
 
-    get name(): string {
-        return this.attributes.get("name");
-    }
+
 
     /** 
      * checks if node has any children at all or any children of nodetype, if represented
@@ -81,6 +82,15 @@ export class XsNode {
         if (nodetype)
             return this.children.filter(c => c.nodename === nodetype).length;
         return this.children.length
+    }
+
+    /** 
+     * checks if node has any children except the given nodetype
+     * @param {NodeName} nodetype node type to be checkd
+     * @returns it return 0 if node does not have any children except given nodetypr
+     * */
+    hasChildrenExcept(nodetype: NodeName): number {
+        return this.children.filter(c => c.nodename !== nodetype).length;
     }
     areAllChildren(nodeType: NodeName): boolean {
         return this.children.every(c => c.nodename === nodeType);
@@ -106,12 +116,5 @@ export class XsNode {
         }
     }
 
-    checks(): boolean {
-        throw new Error("checks method should be defined");
-    }
-
-
-    toTsDefinition(): Object {
-        throw new Error(this.nodename + " | toTsDefinition method should be defined")
-    }
+    abstract checks(): boolean;
 }
