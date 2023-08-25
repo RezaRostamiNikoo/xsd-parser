@@ -4,9 +4,19 @@ import { TsTypeSchema, TsTypeSimpleLiteral } from "./TsTypeSchema";
 import { TsArrayTypeLiteral } from "./TsTypeSchema/TsTypeArrayLiteral";
 import { TsTypeUnionLiteral } from "./TsTypeSchema/TsTypeUnionLiteral";
 
-export function makeEnum(reference: string, items: Array<string>): TsSchema {
+export function makeEnumDefinition(reference: string, items: Array<string>): TsSchema {
     const result = new TsSchema("enum");
-    result.setDefinition(TsEnumSchema.makeEnum(reference, items));
+    result.setDefinition(TsEnumSchema.makeEnumDefinition(reference, items));
+    return result;
+}
+export function makeEnumItems(items: Array<string>): TsSchema {
+    const result = new TsSchema("enum");
+    result.setDefinition(TsEnumSchema.makeEnumItems(items));
+    return result;
+}
+export function makeEnumReference(reference: string): TsSchema {
+    const result = new TsSchema("enum");
+    result.setDefinition(TsEnumSchema.makeEnumReference(reference));
     return result;
 }
 

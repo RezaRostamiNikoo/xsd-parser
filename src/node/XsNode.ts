@@ -20,8 +20,12 @@ export abstract class XsNode {
     protected siblings: Array<XsNode> = []
 
     get Parent(): XsNode { return this.parent; }
-    get Children(): Array<XsNode> { return this.children; }
     get Name(): string { return this.attributes.get("name"); }
+    Children(nodeType?: NodeName): Array<XsNode> {
+        if (!nodeType)
+            return this.children;
+        return this.children.filter(c => c.nodename === nodeType);
+    }
 
     setNode(node: Element): XsNode {
         this.nodename = node.nodeName;

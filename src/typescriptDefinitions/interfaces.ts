@@ -1,5 +1,5 @@
 import { TsTypeSchema } from "./TsTypeSchema";
-import { DefinitionType, TypeUsage } from "./types";
+import { DefinitionType, EnumUsage, TypeUsage } from "./types";
 
 export interface ITsSchema {
     type: DefinitionType;
@@ -28,8 +28,10 @@ export interface ITsTypeLiteralSchema {
 /// Enum
 
 export interface ITsEnumSchema extends ITsDefinitionSchema {
-    items: Array<string>;
-    reference: string;
+    usage: EnumUsage;
+    items?: Array<string>;
+    reference?: string;
+
 }
 
 

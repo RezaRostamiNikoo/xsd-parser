@@ -104,4 +104,9 @@ export class XsSimpleTypeNode extends XsNode implements ITypeDefinition {
         else if (this.listWise()) return ts.makeArrayType(this.BaseTypeDefinition);
         else if (this.unionWise()) throw new Error("XsSimpleTypeNode.toTsDefinition | it should be defined");
     }
+
+
+    getTsSchema(): ts.TsSchema {
+        return undefined;
+    }
 }

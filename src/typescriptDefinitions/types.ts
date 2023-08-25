@@ -8,3 +8,9 @@ export type TypeUsage =
     | "definition"
     | "refrencing"
     ;
+
+export type EnumUsage =
+    | "items"
+    | "definition"
+    | "refrencing"
+    ;
