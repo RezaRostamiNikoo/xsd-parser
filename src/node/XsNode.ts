@@ -21,10 +21,10 @@ export abstract class XsNode {
 
     get Parent(): XsNode { return this.parent; }
     get Name(): string { return this.attributes.get("name"); }
-    Children(nodeType?: NodeName): Array<XsNode> {
+    Children<T extends XsNode>(nodeType?: NodeName): Array<T> {
         if (!nodeType)
-            return this.children;
-        return this.children.filter(c => c.nodename === nodeType);
+            return this.children as Array<T>;
+        return this.children.filter(c => c.nodename === nodeType) as Array<T>;
     }
 
     setNode(node: Element): XsNode {

@@ -1,5 +1,4 @@
 import * as ts from "../../typescriptDefinitions";
-import { ExcessiveElementsException } from "../../errors";
 import { OnlyException } from "../../errors/OnlyException";
 import { XsEnumerationNode } from "../XsEnumerationNode";
 import { XsListNode } from "../XsListNode";
@@ -72,9 +71,10 @@ export class XsSimpleTypeNode extends XsNode implements ITypeDefinition {
 
             if (restrictionNode.areAllChildren("xs:enumeration")) {
                 // TODO: return a json fixed for this condition
-                return ts.makeEnum(
+                return ts.makeEnumDefinition(
                     this.Name,
-                    restrictionNode.Children.map((c: XsEnumerationNode) => { return c.getValue() }));
+                    restrictionNode.Children<XsEnumerationNode>("xs:enumeration")
+                        .map(c => { return c.getValue() }));
             }
             if (!restrictionNode.hasChildren() || this.variety() === "atomic")
                 return ts.makeSimpleType(this.BaseTypeDefinition, this.Name);
@@ -107,6 +107,24 @@ export class XsSimpleTypeNode extends XsNode implements ITypeDefinition {
 
 
     getTsSchema(): ts.TsSchema {
-        return undefined;
+        if (this.hasChildren("xs:list") && !this.Name) {
+            const ls = this.firstChild<XsListNode>("xs:list").getTsSchema()
+            if (ls.type === "type" && (ls.definition as ts.TsTypeSchema).usage === "literal")
+                return ts.makeType((ls.definition as ts.TsTypeSchema).literal); // type literal
+        }
+        if (this.hasChildren("xs:restriction")) {
+            const rs = this.firstChild<XsRestrictionNode>("xs:restriction").getTsSchema();
+            if (this.Name) {
+                if (rs.type === "enum" && (rs.definition as ts.TsEnumSchema).usage === "items")
+                    return ts.makeEnumDefinition(this.Name, (rs.definition as ts.TsEnumSchema).items);// enum definition
+                if (rs.type === "reference")
+                    return ts.makeSimpleType((rs.definition as ts.TsTypeReferenceSchema).reference, this.Name); // type definition
+                if (rs.type === "type" && (rs.definition as ts.TsTypeSchema).usage === "literal")
+                    return ts.makeType((rs.definition as ts.TsTypeSchema).literal, this.Name); // type definition
+            } else if (rs.type === "type" && (rs.definition as ts.TsTypeSchema).usage === "literal") {
+                return ts.makeType((rs.definition as ts.TsTypeSchema).literal); // type literal
+            }
+        }
+        throw new Error("XsSimpleTypeNode.getTsSchema | there is a problem");
     }
 }

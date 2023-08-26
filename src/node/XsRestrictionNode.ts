@@ -21,13 +21,14 @@ export class XsRestrictionNode extends XsNode {
 
     getTsSchema(): ts.TsSchema {
         if (!this.hasChildren())
-            return ts.makeSimpleType(this.attributes.get("base"));
+            return ts.makeTypeReference(this.attributes.get("base")); // type reference
         if (this.hasChildren("xs:enumeration"))
             return ts.makeEnumItems(
-                this.Children("xs:enumeration").map(e => (e as XsEnumerationNode).getValue()));
-
-        if (this.hasChildren("xs:simpleType"))
-            return this.firstChild<XsSimpleTypeNode>("xs:simpleType").getTsSchema();
+                this.Children("xs:enumeration").map(e => (e as XsEnumerationNode).getValue())); // enum items
+        if (this.hasChildren("xs:simpleType")) {
+            const ss = this.firstChild<XsSimpleTypeNode>("xs:simpleType").getTsSchema();
+            return ts.makeType((ss.definition as ts.TsTypeSchema).literal); // type literal
+        }
 
         throw new Error("XsRestrictionNode.getTsSchema | there is a problem");
     }

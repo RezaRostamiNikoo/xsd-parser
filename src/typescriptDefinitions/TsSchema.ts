@@ -2,16 +2,14 @@ import { ITsDefinitionSchema, ITsSchema } from "./interfaces";
 import { DefinitionType as SchemaType } from "./types";
 
 export class TsSchema implements ITsSchema {
-    type: SchemaType;
-    definition: ITsDefinitionSchema;
+    private _type: SchemaType;
+    private _definition: ITsDefinitionSchema;
 
-    constructor(type: SchemaType) {
-        this.type = type;
-    }
 
-    setDefinition(value: ITsDefinitionSchema) {
-        this.definition = value;
-    }
+    get type(): SchemaType { return this._type; }
+    get definition(): ITsDefinitionSchema { return this._definition; }
 
+    setDefinition(value: ITsDefinitionSchema): this { this._definition = value; return this; }
+    setType(type: SchemaType): this { this._type = type; return this; }
 }
 

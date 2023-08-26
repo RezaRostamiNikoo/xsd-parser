@@ -3,30 +3,29 @@ import { EnumUsage } from "./types";
 
 export class TsEnumSchema implements ITsEnumSchema {
     isEnumSchema: boolean = true;
-    usage: EnumUsage;
 
-    items?: string[];
-    reference?: string;
+    private _usage: EnumUsage;
+    private _items: string[];
+    private _reference?: string;
+
+    get usage(): EnumUsage { return this._usage; };
+    get items(): Array<string> { return this._items; };
+    get reference(): string { return this._reference };
+
+    setReference(reference: string): this { this._reference = reference; return this; }
+    setItems(items: Array<string>): this { this._items = items; return this; }
+    setAsDefinition(): this { this._usage = "definition"; return this; }
+    setAsItems(): this { this._usage = "items"; return this; }
 
     public static makeEnumDefinition(reference: string, items: Array<string>): TsEnumSchema {
-        const tes = new TsEnumSchema();
-        tes.usage = "definition";
-        tes.reference = reference;
-        tes.items = items;
-        return tes;
+        return new TsEnumSchema().setAsDefinition().setReference(reference).setItems(items);
     }
 
     public static makeEnumItems(items: Array<string>): TsEnumSchema {
-        const tes = new TsEnumSchema();
-        tes.items = items;
-        tes.usage = "items";
-        return tes;
+        return new TsEnumSchema().setAsItems().setItems(items);
     }
 
-    public static makeEnumReference(reference: string): TsEnumSchema {
-        const tes = new TsEnumSchema();
-        tes.reference = reference;
-        tes.usage = "refrencing";
-        return tes;
+    toJson(): Object {
+        return {}
     }
 }

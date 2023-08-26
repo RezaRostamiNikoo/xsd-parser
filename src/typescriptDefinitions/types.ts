@@ -1,16 +1,16 @@
 export type DefinitionType =
     | "enum"
     | "type"
+    | "reference"
+    | "attribute"
     ;
 
 export type TypeUsage =
     | "literal"
     | "definition"
-    | "refrencing"
     ;
 
 export type EnumUsage =
     | "items"
     | "definition"
-    | "refrencing"
     ;

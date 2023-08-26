@@ -2,24 +2,24 @@ import { TsTypeSchema } from "./TsTypeSchema";
 import { DefinitionType, EnumUsage, TypeUsage } from "./types";
 
 export interface ITsSchema {
-    type: DefinitionType;
-    definition: ITsDefinitionSchema | Array<ITsDefinitionSchema>;
+    get type(): DefinitionType;
+    get definition(): ITsDefinitionSchema | Array<ITsDefinitionSchema>;
 
 };
 
 export interface ITsDefinitionSchema {
-
+    toJson(): Object;
 }
 
 
 export interface ITsTypeSchema extends ITsDefinitionSchema {
-    usage: TypeUsage;
-    reference?: string;
-    literal?: ITsTypeLiteralSchema;
+    get usage(): TypeUsage;
+    get reference(): string;
+    get literal(): ITsTypeLiteralSchema;
 }
 
 export interface ITsTypeLiteralSchema {
-
+    toJson(): Object;
 }
 
 
@@ -28,9 +28,9 @@ export interface ITsTypeLiteralSchema {
 /// Enum
 
 export interface ITsEnumSchema extends ITsDefinitionSchema {
-    usage: EnumUsage;
-    items?: Array<string>;
-    reference?: string;
+    get usage(): EnumUsage;
+    get items(): Array<string>;
+    get reference(): string;
 
 }
 
@@ -38,6 +38,6 @@ export interface ITsEnumSchema extends ITsDefinitionSchema {
 //////////////////////
 /// Property
 export interface ITsPropertySchema extends ITsDefinitionSchema {
-    reference: string;
-    type: TsTypeSchema;
+    get reference(): string;
+    get type(): TsTypeSchema;
 }

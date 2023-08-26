@@ -6,4 +6,11 @@ export class TsPropertySchema implements ITsPropertySchema {
     reference: string;
     type: TsTypeSchema;
 
+
+    toJson(): Object {
+        return {
+            reference: this.reference,
+            type: this.type
+        }
+    }
 }
