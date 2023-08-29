@@ -10,6 +10,6 @@ export class XsExtensionNode extends XsNode {
 
 
     getTsSchema(): ITsSchema {
-
+        
     }
 }
