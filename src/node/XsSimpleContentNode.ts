@@ -1,8 +1,11 @@
 import { ITsSchema, ITsTypeSchema } from "../typescriptDefinitions";
 import { XsNode } from "./XsNode";
 import { XsRestrictionNode } from "./XsRestrictionNode";
+import { TagType } from "./types";
 
 export class XsSimpleContentNode extends XsNode {
+    _tag: TagType = "xs:simpleContent";
+    
     checks(): boolean {
         if ((!this.hasChildren("xs:restriction") && !this.hasChildren("xs:extension")) || !this.hasChildren()) {
             throw new Error("XsSimpleContentNode.checks | there is a problem");

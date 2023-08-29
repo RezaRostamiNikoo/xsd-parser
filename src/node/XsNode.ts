@@ -1,19 +1,20 @@
-import { NodeName } from "./types";
+import { TagType } from "./types";
 import { makeid } from "../utils/helpers";
 import { mapToObject } from "../utils/map";
 import { factory } from "./Factory";
 import { ITypeDefinition } from "./TypeDefinitionComponents/ITypeDefinition";
+import { AttributeHandler } from "./AttributeHandler";
 
 export abstract class XsNode {
-    
+
     public static elements: Map<string, XsNode> = new Map();
     public static attributes: Map<string, XsNode> = new Map();
     public static types: Map<string, ITypeDefinition> = new Map();
     public static complexTypes: Map<string, XsNode> = new Map();
 
     ///////////////////////////////////
-    protected nodename: string;
-    protected attributes: Map<string, string> = new Map();
+    abstract readonly _tag: TagType;
+    protected attributes: AttributeHandler = new AttributeHandler();
     protected children: Array<XsNode> = [];
     protected parent: XsNode = null;
     protected root: XsNode = null;
@@ -21,16 +22,23 @@ export abstract class XsNode {
     protected prev: XsNode = null;
     protected siblings: Array<XsNode> = []
 
+    get Tag(): string { return this._tag; }
     get Parent(): XsNode { return this.parent; }
-    get Name(): string { return this.attributes.get("name"); }
-    Children<T extends XsNode>(nodeType?: NodeName): Array<T> {
-        if (!nodeType)
+    get Attributes(): AttributeHandler { return this.attributes; }
+
+
+    getAttr(attribute: string): string { return this.attributes.get(attribute); }
+
+
+
+
+    Children<T extends XsNode>(tagType?: TagType): Array<T> {
+        if (!tagType)
             return this.children as Array<T>;
-        return this.children.filter(c => c.nodename === nodeType) as Array<T>;
+        return this.children.filter(c => c.Tag === tagType) as Array<T>;
     }
 
     setNode(node: Element): XsNode {
-        this.nodename = node.nodeName;
         this.extractAttributes(node);
         this.extractsChildren(node);
 
@@ -48,7 +56,7 @@ export abstract class XsNode {
     private extractsChildren(node: Element) {
         if (!node.childNodes) return [];
         Array.from(node.childNodes).forEach((child: Element) => {
-            switch (child.nodeName as NodeName) {
+            switch (child.nodeName as TagType) {
                 case "xs:element": this.children.push(this.createXsNode(child, "XsElementNode", XsNode.elements)); break;
                 case "xs:attribute": this.children.push(this.createXsNode(child, "XsAttributeNode", XsNode.attributes)); break;
                 case "xs:simpleType": this.children.push(this.createXsNode(child, "XsSimpleTypeNode", XsNode.types)); break;
@@ -72,8 +80,7 @@ export abstract class XsNode {
     private createXsNode(node: Element, elementName: string, map?: Map<string, any>) {
         const element = factory(elementName).setNode(node);
         element.parent = this;
-        element.root =
-            map?.set(element.Name || makeid(), element);
+        map?.set(element.getAttr("name") || makeid(), element);
         return element;
     }
     /////////////////////////////////////////////
@@ -82,43 +89,43 @@ export abstract class XsNode {
 
     /** 
      * checks if node has any children at all or any children of nodetype, if represented
-     * @param {NodeName} nodetype node type to be checkd
+     * @param {TagType} nodetype node type to be checkd
      * @returns it return 0 if node does not have any children or any children of nodeType, if represented
      * */
-    hasChildren(nodetype?: NodeName): number {
+    hasChildren(nodetype?: TagType): number {
         if (nodetype)
-            return this.children.filter(c => c.nodename === nodetype).length;
+            return this.children.filter(c => c._tag === nodetype).length;
         return this.children.length
     }
 
     /** 
      * checks if node has any children except the given nodetype
-     * @param {NodeName} nodetype node type to be checkd
+     * @param {TagType} nodetype node type to be checkd
      * @returns it return 0 if node does not have any children except given nodetypr
      * */
-    hasChildrenExcept(nodetype: NodeName): number {
-        return this.children.filter(c => c.nodename !== nodetype).length;
+    hasChildrenExcept(nodetype: TagType): number {
+        return this.children.filter(c => c._tag !== nodetype).length;
     }
-    areAllChildren(nodeType: NodeName): boolean {
-        return this.children.every(c => c.nodename === nodeType);
-    }
-
-    isParent(nodeType: NodeName): boolean {
-        return this.parent.nodename === nodeType;
+    areAllChildren(nodeType: TagType): boolean {
+        return this.children.every(c => c._tag === nodeType);
     }
 
+    isParent(nodeType: TagType): boolean {
+        return this.parent._tag === nodeType;
+    }
 
-    firstChild<T extends XsNode>(nodeType?: NodeName): T {
+
+    firstChild<T extends XsNode>(nodeType?: TagType): T {
         if (!nodeType) return this.children[0] as T;
-        return this.children.filter(c => c.nodename === nodeType)[0] as T;
+        return this.children.filter(c => c._tag === nodeType)[0] as T;
     }
 
 
 
     toJson(): object {
         return {
-            nodename: this.nodename,
-            attributes: mapToObject(this.attributes),
+            nodename: this._tag,
+            attributes: this.attributes.toObject(),
             children: this.children.map(child => child.toJson())
         }
     }

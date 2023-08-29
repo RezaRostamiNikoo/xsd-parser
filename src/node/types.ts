@@ -1,4 +1,5 @@
-export type NodeName =
+export type TagType =
+    | "root"
     | "xs:element"
     | "xs:attribute"
     | "xs:simpleType"

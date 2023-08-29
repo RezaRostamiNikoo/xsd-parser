@@ -2,8 +2,10 @@ import { XsNode } from "./XsNode";
 import { XsSimpleTypeNode } from "./TypeDefinitionComponents/XsSimpleTypeNode";
 import * as ts from "../typescriptDefinitions";
 import { XsEnumerationNode } from "./XsEnumerationNode";
+import { TagType } from "./types";
 
 export class XsRestrictionNode extends XsNode {
+    _tag: TagType = "xs:restriction";
 
     checks(): boolean {
         throw new Error("XsRestrictionNode.checks | Method not implemented.");

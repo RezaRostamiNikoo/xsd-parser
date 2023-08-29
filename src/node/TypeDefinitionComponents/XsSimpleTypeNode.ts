@@ -5,8 +5,11 @@ import { XsListNode } from "../XsListNode";
 import { XsNode } from "../XsNode";
 import { XsRestrictionNode } from "../XsRestrictionNode";
 import { ITypeDefinition } from "./ITypeDefinition";
+import { TagType } from "../types";
 
 export class XsSimpleTypeNode extends XsNode implements ITypeDefinition {
+    get Name(): string { return this.getAttr("name"); }
+    _tag: TagType = "xs:simpleType";
     get TypeParent(): ITypeDefinition {
         throw new Error("Method not implemented.");
     }

@@ -2,7 +2,7 @@ import { XsAttributeNode, XsElementNode } from "./DeclarationComponents";
 import { XsAttributeGroupNode } from "./GroupDefinitionComponents";
 import { XsComplexTypeNode, XsSimpleTypeNode } from "./TypeDefinitionComponents";
 import { XsNode } from "./XsNode";
-import { NodeName } from "./types";
+import { TagType } from "./types";
 
 export class NodeStorage {
     private elements: Map<string, XsElementNode> = new Map();
@@ -13,7 +13,7 @@ export class NodeStorage {
 
 
     addNode(node: XsNode) {
-        
+        node.Tag
     }
 
 

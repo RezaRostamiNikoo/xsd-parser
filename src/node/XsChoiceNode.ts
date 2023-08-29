@@ -1,10 +1,10 @@
 import * as ts from "../typescriptDefinitions";
-import { XsElementNode } from "./DeclarationComponents";
-import { ITypeDefinition } from "./TypeDefinitionComponents/ITypeDefinition";
 import { XsNode } from "./XsNode";
+import { TagType } from "./types";
 
 
 export class XsChoiceNode extends XsNode {
+    _tag: TagType = "xs:choice";
 
     checks(): boolean {
         if (this.hasChildrenExcept("xs:element"))
@@ -12,8 +12,10 @@ export class XsChoiceNode extends XsNode {
         return true;
     }
 
+
+
     getTsSchema(): ts.TsSchema {
-        return ts.makeUnionType(this.children.map((e) => e.Name));
+        return ts.makeUnionType(this.children.map((e) => e.Attributes.name));
     }
 
 

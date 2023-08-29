@@ -1,8 +1,8 @@
 import { XsNode } from "../node";
-import { NodeName } from "../node/types";
+import { TagType } from "../node/types";
 
 export class ExcessiveElementsException extends Error {
-    constructor(node: XsNode, elementType: NodeName) {
+    constructor(node: XsNode, elementType: TagType) {
         super(`${node.Name} element has exceesive ${elementType} element`)
     }
 }

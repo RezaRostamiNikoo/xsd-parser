@@ -1,8 +1,10 @@
 import * as ts from "../../typescriptDefinitions";
 import { XsSimpleTypeNode } from "../TypeDefinitionComponents";
 import { XsNode } from "../XsNode";
+import { TagType } from "../types";
 
 export class XsAttributeNode extends XsNode {
+    _tag: TagType = "xs:attribute";
     checks(): boolean {
         if (this.hasChildrenExcept("xs:simpleType"))
             throw new Error("XsAttributeNode.checks | it can have just xs:simpleType as its children ");

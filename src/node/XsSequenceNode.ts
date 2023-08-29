@@ -1,10 +1,11 @@
 import * as ts from "../typescriptDefinitions";
 import { XsElementNode } from "./DeclarationComponents";
-import { ITypeDefinition } from "./TypeDefinitionComponents/ITypeDefinition";
 import { XsNode } from "./XsNode";
+import { TagType } from "./types";
 
 
 export class XsSequenceNode extends XsNode {
+    _tag: TagType = "xs:sequence";
 
     checks(): boolean {
         if (this.hasChildrenExcept("xs:element"))

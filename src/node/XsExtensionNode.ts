@@ -1,7 +1,10 @@
 import { ITsSchema } from "../typescriptDefinitions";
 import { XsNode } from "./XsNode";
+import { TagType } from "./types";
 
 export class XsExtensionNode extends XsNode {
+    _tag: TagType = "xs:extension";
+
     checks(): boolean {
         if (!this.hasChildren())
             throw new Error("XsExtensionNode.checks | Method not implemented.");
@@ -10,6 +13,8 @@ export class XsExtensionNode extends XsNode {
 
 
     getTsSchema(): ITsSchema {
-        
+
+
+        return null;
     }
 }
