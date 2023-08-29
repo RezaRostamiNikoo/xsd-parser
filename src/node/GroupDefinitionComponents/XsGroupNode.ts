@@ -27,7 +27,7 @@ export class XsGroupNode extends XsNode implements ITypeDefinition {
             return ts.makeTypeReference(this.attributes.get("ref"));
         if (!this.hasChildrenExcept("xs:choice") && this.Name) {
             const choice: XsChoiceNode = this.firstChild("xs:choice");
-            const tsdefinition = choice.toTsDefinition();
+            const tsdefinition = choice.getTsSchema();
             const df = tsdefinition.definition as ts.TsTypeUnionLiteral;
             return ts.makeUnionType(df.items, this.Name);
         }

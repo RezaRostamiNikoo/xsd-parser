@@ -18,12 +18,23 @@ export class XsAttributeNode extends XsNode {
     getTsSchema(): ts.TsSchema {
         if (!this.hasChildren()) {
             if (this.getName() && this.getType() && !this.getRef()) {
-                const optional = this.getUse() === "optional";
-                return ts.makeAttribute(this.getName(), this.getType(), optional, this.getFixed());
+                return ts.makeAttribute(
+                    this.getName(),
+                    new ts.TsTypeSimpleLiteral().setReference(this.getType()),
+                    this.getUse() === "optional",
+                    this.getFixed()); // attribute
             }
         } else {
-            const sn = this.firstChild<XsSimpleTypeNode>("xs:simpleType");
-
+            const sts = this.firstChild<XsSimpleTypeNode>("xs:simpleType").getTsSchema();
+            if (this.getName() && !this.getRef() && sts.type === "type" && (sts.definition as ts.ITsTypeLiteralSchema).isTsTypeLiteralSchema)
+                return ts.makeAttribute(
+                    this.getName(),
+                    (sts.definition as ts.ITsTypeLiteralSchema),
+                    this.getUse() === "optional",
+                    this.getFixed()); // attribute
         }
+
+        throw new Error("XsAttributeNode.getTsSchema | there is a problem.");
+
     }
 }

@@ -19,6 +19,7 @@ export interface ITsTypeSchema extends ITsDefinitionSchema {
 }
 
 export interface ITsTypeLiteralSchema {
+    isTsTypeLiteralSchema: boolean;
     toJson(): Object;
 }
 

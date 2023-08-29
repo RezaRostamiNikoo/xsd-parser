@@ -1,6 +1,7 @@
 import { ITsTypeLiteralSchema } from "../interfaces";
 
 export class TsTypeUnionLiteral implements ITsTypeLiteralSchema {
+    isTsTypeLiteralSchema: boolean = true;
     isUnionType: boolean = true;
 
     private _items: Array<string>;

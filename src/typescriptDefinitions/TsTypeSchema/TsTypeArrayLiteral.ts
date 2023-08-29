@@ -1,6 +1,7 @@
 import { ITsTypeLiteralSchema } from "../interfaces";
 
 export class TsArrayTypeLiteral implements ITsTypeLiteralSchema {
+    isTsTypeLiteralSchema: boolean = true;
     isArrayType: boolean = true;
 
     private _type: string;

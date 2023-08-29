@@ -4,7 +4,7 @@ import { ITypeDefinition } from "./TypeDefinitionComponents/ITypeDefinition";
 import { XsNode } from "./XsNode";
 
 
-export class XsChoiceNode extends XsNode implements ITypeDefinition {
+export class XsChoiceNode extends XsNode {
 
     checks(): boolean {
         if (this.hasChildrenExcept("xs:element"))
@@ -12,18 +12,7 @@ export class XsChoiceNode extends XsNode implements ITypeDefinition {
         return true;
     }
 
-
-
-    get BaseTypeDefinition(): string {
-        throw new Error("Method not implemented.");
-    }
-    get TypeParent(): ITypeDefinition {
-        throw new Error("Method not implemented.");
-    }
-    variety(): "atomic" | "list" | "union" {
-        throw new Error("Method not implemented.");
-    }
-    toTsDefinition(): ts.TsSchema {
+    getTsSchema(): ts.TsSchema {
         return ts.makeUnionType(this.children.map((e) => e.Name));
     }
 

@@ -5,6 +5,7 @@ import { factory } from "./Factory";
 import { ITypeDefinition } from "./TypeDefinitionComponents/ITypeDefinition";
 
 export abstract class XsNode {
+    
     public static elements: Map<string, XsNode> = new Map();
     public static attributes: Map<string, XsNode> = new Map();
     public static types: Map<string, ITypeDefinition> = new Map();
@@ -15,6 +16,7 @@ export abstract class XsNode {
     protected attributes: Map<string, string> = new Map();
     protected children: Array<XsNode> = [];
     protected parent: XsNode = null;
+    protected root: XsNode = null;
     protected next: XsNode = null;
     protected prev: XsNode = null;
     protected siblings: Array<XsNode> = []
@@ -51,8 +53,8 @@ export abstract class XsNode {
                 case "xs:attribute": this.children.push(this.createXsNode(child, "XsAttributeNode", XsNode.attributes)); break;
                 case "xs:simpleType": this.children.push(this.createXsNode(child, "XsSimpleTypeNode", XsNode.types)); break;
                 case "xs:complexType": this.children.push(this.createXsNode(child, "XsComplexTypeNode", XsNode.complexTypes)); break;
-
                 case "xs:attributeGroup": this.children.push(this.createXsNode(child, "XsAttributeGroupNode")); break;
+
                 case "xs:choice": this.children.push(this.createXsNode(child, "XsChoiceNode")); break;
                 case "xs:complexContent": this.children.push(this.createXsNode(child, "XsComplexContentNode")); break;
                 case "xs:enumeration": this.children.push(this.createXsNode(child, "XsEnumerationNode")); break;
@@ -70,7 +72,8 @@ export abstract class XsNode {
     private createXsNode(node: Element, elementName: string, map?: Map<string, any>) {
         const element = factory(elementName).setNode(node);
         element.parent = this;
-        map?.set(element.Name || makeid(), element);
+        element.root =
+            map?.set(element.Name || makeid(), element);
         return element;
     }
     /////////////////////////////////////////////

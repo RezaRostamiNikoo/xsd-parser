@@ -1,6 +1,7 @@
 import { ITsTypeLiteralSchema } from "../interfaces";
 
 export class TsTypeSimpleLiteral implements ITsTypeLiteralSchema {
+    isTsTypeLiteralSchema: boolean = true;
     isSimpleType: boolean = true;
 
     private _reference: string;

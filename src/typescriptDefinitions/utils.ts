@@ -8,73 +8,68 @@ import { TsTypeUnionLiteral } from "./TsTypeSchema/TsTypeUnionLiteral";
 import { ITsTypeLiteralSchema } from "./interfaces";
 
 export function makeEnumDefinition(reference: string, items: Array<string>): TsSchema {
-    const result = new TsSchema("enum");
+    const result = new TsSchema().setType("enum");
     result.setDefinition(TsEnumSchema.makeEnumDefinition(reference, items));
     return result;
 }
 export function makeEnumItems(items: Array<string>): TsSchema {
-    const result = new TsSchema("enum");
+    const result = new TsSchema().setType("enum");
     result.setDefinition(TsEnumSchema.makeEnumItems(items));
     return result;
 }
 
 export function makeArrayType(type: string, reference?: string): TsSchema {
-    const ttd = new TsSchema("type");
+    const ttd = new TsSchema().setType("type");
     if (reference)
-        ttd.setDefinition(TsTypeSchema.makeTypeDefinition(reference, new TsArrayTypeLiteral(type)));
+        ttd.setDefinition(TsTypeSchema.makeTypeDefinition(reference, new TsArrayTypeLiteral().setType(type)));
     else
-        ttd.setDefinition(TsTypeSchema.makeTypeLiteral(new TsArrayTypeLiteral(type)));
+        ttd.setDefinition(TsTypeSchema.makeTypeLiteral(new TsArrayTypeLiteral().setType(type)));
     return ttd;
 }
 
-export function makeSimpleType(type: string, reference?: string): TsSchema {
-    const ttd = new TsSchema("type");
+export function makeSimpleType(typeRefrence: string, reference?: string): TsSchema {
+    const ttd = new TsSchema().setType("type");
     if (reference)
-        ttd.setDefinition(TsTypeSchema.makeTypeDefinition(reference, new TsTypeSimpleLiteral(type)));
+        ttd.setDefinition(TsTypeSchema.makeTypeDefinition(reference, new TsTypeSimpleLiteral().setReference(typeRefrence)));
     else
-        ttd.setDefinition(TsTypeSchema.makeTypeLiteral(new TsTypeSimpleLiteral(type)));
+        ttd.setDefinition(TsTypeSchema.makeTypeLiteral(new TsTypeSimpleLiteral().setReference(typeRefrence)));
     return ttd;
 }
 
-export function makeUnionType(types: string[], reference?: string): TsSchema {
-    const ttd = new TsSchema("type");
+export function makeUnionType(items: string[], reference?: string): TsSchema {
+    const ttd = new TsSchema().setType("type");
     if (reference)
-        ttd.setDefinition(TsTypeSchema.makeTypeDefinition(reference, new TsTypeUnionLiteral(types)));
+        ttd.setDefinition(TsTypeSchema.makeTypeDefinition(reference, new TsTypeUnionLiteral().setItems(items)));
     else
-        ttd.setDefinition(TsTypeSchema.makeTypeLiteral(new TsTypeUnionLiteral(types)));
+        ttd.setDefinition(TsTypeSchema.makeTypeLiteral(new TsTypeUnionLiteral().setItems(items)));
     return ttd;
 }
 
 export function makeTypeReference(reference: string): TsSchema {
-    const ttd = new TsSchema("reference");
+    const ttd = new TsSchema().setType("reference");
     ttd.setDefinition(new TsTypeReferenceSchema(reference));
     return ttd;
 }
 
 export function makeType(typeListeralSchema: ITsTypeLiteralSchema, reference?: string) {
-    const result = new TsSchema("type");
-    const tts = new TsTypeSchema();
-    tts.reference = reference;
-    tts.literal = typeListeralSchema;
-    tts.usage = reference ? "definition" : "literal";
+    const result = new TsSchema().setType("type");
+    const tts = new TsTypeSchema().setReference(reference).setAsLiteral().setLiteral(typeListeralSchema)
     result.setDefinition(tts);
     return result;
 }
 
 
-export function makeAttribute(name: string, type: string, oprional: boolean = false, defaultValue: string = undefined): TsSchema {
+export function makeAttribute(name: string, type: ITsTypeLiteralSchema, oprional: boolean = false, defaultValue: string = undefined): TsSchema {
     const attr = new TsAttributeSchema();
-    attr.setName(name).setType(type).setAsDefinition();
+    attr.setName(name).setType(type).setAsDefinition().setDefault(defaultValue);
     if (oprional) attr.setOptional();
-    if (defaultValue) attr.setDefault(defaultValue);
-    return new TsSchema("attribute").setDefinition(attr);
+    return new TsSchema().setType("attribute").setDefinition(attr);
 }
 
 
 export function makeAttributeRef(ref: string, oprional: boolean = false, defaultValue: string = undefined): TsSchema {
     const attr = new TsAttributeSchema();
-    attr.setRef(ref).setAsRef();
+    attr.setRef(ref).setAsRef().setDefault(defaultValue);
     if (oprional) attr.setOptional();
-    if (defaultValue) attr.setDefault(defaultValue);
-    return new TsSchema("attribute").setDefinition(attr);
+    return new TsSchema().setType("attribute").setDefinition(attr);
 }
