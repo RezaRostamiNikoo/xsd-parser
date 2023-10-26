@@ -1,17 +1,8 @@
 
-import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
-import { XsInteger } from "./XsInteger";
+import * as ts from "../../../typescriptDefinitions";
 import { XsType } from "./XsType";
 
 export class XsLong extends XsType {
-    get Name(): string {
-        return "long"
-    }
-    toTsDefinition(): TsSchema {
-        return null;
-    }
-    type: string = "xs:long";
-    variety(): "atomic" | "list" | "union" {
-        return "atomic";
-    }
+    _tag: string = "xs:long";
+    getTsSchema(): ts.TsSchema { return ts.makeTypeReference("number"); }
 }

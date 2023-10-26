@@ -1,15 +1,9 @@
-import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
+import * as ts from "../../../typescriptDefinitions";
 import { XsType } from "./XsType";
 
 export class XsNMTOKEN extends XsType {
-    get Name(): string {
-        return "NMTOKEN"
-    }
-    toTsDefinition(): TsSchema {
-        return null;
-    }
-    type: string = "xs:NMTOKEN";
-    variety(): "atomic" | "list" | "union" {
-        return "atomic";
+    _tag: string = "xs:NMTOKEN";
+    getTsSchema(): ts.TsSchema {
+        return ts.makeSimpleType("Token", "NMTOKEN");
     }
 }

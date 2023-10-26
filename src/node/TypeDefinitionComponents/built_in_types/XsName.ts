@@ -1,16 +1,9 @@
-import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
-import { XsToken } from "./XsToken";
+import * as ts from "../../../typescriptDefinitions";
 import { XsType } from "./XsType";
 
 export class XsName extends XsType {
-    get Name(): string {
-        return "Name"
-    }
-    toTsDefinition(): TsSchema {
-        return null;
-    }
-    type: string = "xs:Name";
-    variety(): "atomic" | "list" | "union" {
-        return "atomic";
+    _tag: string = "xs:Name";
+    getTsSchema(): ts.TsSchema {
+        return ts.makeSimpleType("Token", "Name");
     }
 }

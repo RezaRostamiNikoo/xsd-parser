@@ -1,5 +1,5 @@
 import * as t from ".";
-import { ITypeDefinition } from "../ITypeDefinition";
+import { XsType } from "./XsType";
 
 const anyType = new t.XsAnyType();
 const anySimpleType = new t.XsAnySimpleType(anyType);
@@ -27,7 +27,7 @@ const integer = new t.XsInteger(decimal);
 const long = new t.XsLong(integer);
 
 
-export const types: { [key: string]: ITypeDefinition } = {
+export const types: { [key: string]: XsType } = {
     "xs:anyType": anyType,
     "xs:anySimpleType": anySimpleType,
     "xs:anyAtomicType": anyAtomicType,

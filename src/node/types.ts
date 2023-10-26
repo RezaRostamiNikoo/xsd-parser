@@ -1,5 +1,5 @@
 export type TagType =
-    | "root"
+    | "xs:schema"
     | "xs:element"
     | "xs:attribute"
     | "xs:simpleType"

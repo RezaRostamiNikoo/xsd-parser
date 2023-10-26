@@ -1,16 +1,9 @@
-import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
-import { XsToken } from "./XsToken";
+import * as ts from "../../../typescriptDefinitions";
 import { XsType } from "./XsType";
 
 export class XsLanguage extends XsType {
-    get Name(): string {
-        return "language"
-    }
-    toTsDefinition(): TsSchema {
-        return null;
-    }
-    type: string = "xs:language";
-    variety(): "atomic" | "list" | "union" {
-        return "atomic";
+    _tag: string = "xs:language";
+    getTsSchema(): ts.TsSchema {
+        return ts.makeSimpleType("Token", "Language");
     }
 }

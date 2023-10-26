@@ -1,13 +1,8 @@
-import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
+import * as ts from "../../../typescriptDefinitions";
 import { XsType } from "./XsType";
 
 export class XsDouble extends XsType {
-    get Name(): string { return "double"; }
-
-    type: string = "xs:double";
-    variety(): "atomic" | "list" | "union" {
-        return "atomic";
-    }
-    toTsDefinition(): TsSchema { return null; }
+    _tag: string = "xs:double";
+    getTsSchema(): ts.TsSchema { return ts.makeTypeReference("number"); }
 
 }

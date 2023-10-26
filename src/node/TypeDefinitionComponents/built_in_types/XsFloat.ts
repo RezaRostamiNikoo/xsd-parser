@@ -1,18 +1,7 @@
-import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
+import * as ts from "../../../typescriptDefinitions";
 import { XsType } from "./XsType";
 
 export class XsFloat extends XsType {
-
-    get Name(): string { return "float"; }
-
-    toTsDefinition(): TsSchema { return null; }
-
-    type: string = "xs:float";
-
-    variety(): "atomic" | "list" | "union" {
-
-        return "atomic";
-
-    }
-
+    _tag: string = "xs:float";
+    getTsSchema(): ts.TsSchema { return ts.makeTypeReference("number"); }
 }

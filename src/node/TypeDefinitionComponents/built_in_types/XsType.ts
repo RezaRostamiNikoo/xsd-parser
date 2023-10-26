@@ -1,17 +1,13 @@
-import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
-import { ITypeDefinition } from "../ITypeDefinition";
+import * as ts from "../../../typescriptDefinitions";
 
-export abstract class XsType implements ITypeDefinition {
-    abstract type: string;
-    parent: ITypeDefinition;
+export abstract class XsType {
+    abstract _tag: string;
+    parent: XsType;
 
-    get BaseTypeDefinition(): string { return this.type; }
-    get TypeParent(): ITypeDefinition { return this.parent; }
-    abstract get Name(): string;
+    get TypeParent(): XsType { return this.parent; }
 
-    abstract variety(): "atomic" | "list" | "union";
-    abstract toTsDefinition(): TsSchema;
-    constructor(parent: ITypeDefinition) {
+    abstract getTsSchema(): ts.TsSchema;
+    constructor(parent: XsType) {
         if (this.parent)
             this.parent = parent;
     }

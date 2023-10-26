@@ -1,129 +1,32 @@
 import * as ts from "../../typescriptDefinitions";
 import { OnlyException } from "../../errors/OnlyException";
-import { XsEnumerationNode } from "../XsEnumerationNode";
-import { XsListNode } from "../XsListNode";
+import { XsListNode } from "../misc/XsListNode";
 import { XsNode } from "../XsNode";
-import { XsRestrictionNode } from "../XsRestrictionNode";
-import { ITypeDefinition } from "./ITypeDefinition";
+import { XsRestrictionNode } from "../misc/XsRestrictionNode";
 import { TagType } from "../types";
 
-export class XsSimpleTypeNode extends XsNode implements ITypeDefinition {
-    get Name(): string { return this.getAttr("name"); }
+export class XsSimpleTypeNode extends XsNode {
     _tag: TagType = "xs:simpleType";
-    get TypeParent(): ITypeDefinition {
-        throw new Error("Method not implemented.");
-    }
-    get BaseTypeDefinition(): string { return this.baseTypeDefinition(); }
-
-    checks(): boolean {
-        // it it has not any children
-        if (this.hasChildren() < 1)
-            throw Error("XsSimpleTypeNode.toTsDefinition | xs:simpleType should have at least one children")
-        if (this.hasChildren("xs:list") + this.hasChildren("xs:union") + this.hasChildren("xs:restriction") > 1)
-            throw new OnlyException(this, ["xs:restriction", "xs:union", "xs:list"])
-        return true;
-    }
-
-    variety(): "atomic" | "list" | "union" {
-        if (this.hasChildren("xs:list") === 1) return "list";
-        if (this.hasChildren("xs:union") === 1) return "union";
-        // TODO: check the veriety type of the restriction
-        if (this.hasChildren("xs:restriction")) {
-            const type = this.baseTypeDefinition();
-            if (!type)
-                throw new Error("XsSimpleType.Variety | it should be handled");
-            const definition = XsNode.types.get(type);
-            if (!definition)
-                throw new Error("XsSimpleType.Variety | it should be handled");
-            return definition.variety();
-        }
-        throw new Error("XsSimpleType.Variety | it should be handled");
-    }
-
-
-    baseTypeDefinition(): string {
-        if (this.hasChildren("xs:restriction"))
-            return (this.firstChild("xs:restriction") as XsRestrictionNode).baseTypeDefinition()
-        if (this.hasChildren("xs:list"))
-            return (this.firstChild("xs:list") as XsListNode).itemType();
-        if (this.hasChildren("xs:union"))
-            throw new Error("XsSimpleTypeNode.baseTypeDefinition | it should be defined for union");
-    }
-
-
-
-    rules(): Array<"Rule1" | "Rule2" | "Rule3" | "Rule4"> {
-        if (this.hasChildren("xs:restriction") && this.variety() === "atomic")
-            return ["Rule1", "Rule2"];
-        if (this.hasChildren("xs:list") || this.hasChildren("xs:restriction") && this.variety() === "list")
-            return ["Rule1", "Rule3"];
-        if (this.hasChildren("xs:union") || this.hasChildren("xs:restriction") && this.variety() === "union")
-            return ["Rule1", "Rule4"];
-
-        throw new Error("XsSimpleTypeNode.rules | check the function");
-    }
 
     restrictionWise(): boolean { return this.hasChildren("xs:restriction") === 1; }
     listWise(): boolean { return this.hasChildren("xs:list") === 1; }
     unionWise(): boolean { return this.hasChildren("xs:union") === 1; }
 
-
-    toTsDefinition(): ts.TsSchema {
-        if (this.restrictionWise()) {
-            const restrictionNode: XsRestrictionNode = this.firstChild("xs:restriction") as XsRestrictionNode;
-
-            if (restrictionNode.areAllChildren("xs:enumeration")) {
-                // TODO: return a json fixed for this condition
-                return ts.makeEnumDefinition(
-                    this.Name,
-                    restrictionNode.Children<XsEnumerationNode>("xs:enumeration")
-                        .map(c => { return c.getValue() }));
-            }
-            if (!restrictionNode.hasChildren() || this.variety() === "atomic")
-                return ts.makeSimpleType(this.BaseTypeDefinition, this.Name);
-            else if (this.variety() === "list") {
-                const list = this.firstChild() as XsListNode;
-                return ts.makeArrayType(this.BaseTypeDefinition, this.Name);
-            }
-            else if (this.variety() === "union")
-                throw new Error("XsSimpleTypeNode.toTsDefinition | it should be defined in restrictionWise()");
-            else
-                throw new Error("XsSimpleTypeNode.toTsDefinition | it should be defined in restrictionWise()");
-
-        }
-
-        if (!this.Name) {
-            if (this.listWise()) {
-                return ts.makeArrayType(this.BaseTypeDefinition, this.Name);
-            }
-        }
-        if (this.Name) {
-            if (this.listWise()) {
-                const list = this.firstChild() as XsListNode;
-                return ts.makeArrayType(list.itemType(), this.Name);
-            }
-        }
-
-        else if (this.listWise()) return ts.makeArrayType(this.BaseTypeDefinition);
-        else if (this.unionWise()) throw new Error("XsSimpleTypeNode.toTsDefinition | it should be defined");
-    }
-
-
     getTsSchema(): ts.TsSchema {
-        if (this.hasChildren("xs:list") && !this.Name) {
+        if (this.hasChildren("xs:list") && !this._attributes.get("name")) {
             const ls = this.firstChild<XsListNode>("xs:list").getTsSchema()
             if (ls.type === "type" && (ls.definition as ts.TsTypeSchema).usage === "literal")
                 return ts.makeType((ls.definition as ts.TsTypeSchema).literal); // type literal
         }
         if (this.hasChildren("xs:restriction")) {
             const rs = this.firstChild<XsRestrictionNode>("xs:restriction").getTsSchema();
-            if (this.Name) {
+            if (this._attributes.get("name")) {
                 if (rs.type === "enum" && (rs.definition as ts.TsEnumSchema).usage === "items")
-                    return ts.makeEnumDefinition(this.Name, (rs.definition as ts.TsEnumSchema).items);// enum definition
+                    return ts.makeEnumDefinition(this._attributes.get("name"), (rs.definition as ts.TsEnumSchema).items);// enum definition
                 if (rs.type === "reference")
-                    return ts.makeSimpleType((rs.definition as ts.TsTypeReferenceSchema).reference, this.Name); // type definition
+                    return ts.makeSimpleType((rs.definition as ts.TsTypeReferenceSchema).reference, this._attributes.get("name")); // type definition
                 if (rs.type === "type" && (rs.definition as ts.TsTypeSchema).usage === "literal")
-                    return ts.makeType((rs.definition as ts.TsTypeSchema).literal, this.Name); // type definition
+                    return ts.makeType((rs.definition as ts.TsTypeSchema).literal, this._attributes.get("name")); // type definition
             } else if (rs.type === "type" && (rs.definition as ts.TsTypeSchema).usage === "literal") {
                 return ts.makeType((rs.definition as ts.TsTypeSchema).literal); // type literal
             }

@@ -1,17 +1,10 @@
-import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
-import { XsName } from "./XsName";
+import * as ts from "../../../typescriptDefinitions";
 import { XsType } from "./XsType";
 
 export class XsNCName extends XsType {
-    get Name(): string {
-        return "NCName"
-    }
-    toTsDefinition(): TsSchema {
-        return null;
-    }
-    type: string = "xs:ncname";
-    variety(): "atomic" | "list" | "union" {
-        return "atomic";
+    _tag: string = "xs:ncname";
+    getTsSchema(): ts.TsSchema {
+        return ts.makeSimpleType("Name", "NCName");
     }
 
 }

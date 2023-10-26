@@ -1,15 +1,9 @@
-import { TsSchema } from "../../../typescriptDefinitions/TsTypeSchema/TsTypeSchema";
+import * as ts from "../../../typescriptDefinitions";
 import { XsType } from "./XsType";
 
 export class XsNormalizedString extends XsType {
-    get Name(): string {
-        return "normalizedString"
-    }
-    toTsDefinition(): TsSchema {
-        return null;
-    }
-    type: string = "xs:normalizedString";
-    variety(): "atomic" | "list" | "union" {
-        return "atomic";
+    _tag: string = "xs:normalizedString";
+    getTsSchema(): ts.TsSchema {
+        return ts.makeSimpleType("string", "NormalizedString");
     }
 }

@@ -1,3 +1,22 @@
+
+export const elementMapping = {
+    "xs:schema": "XsSchemaNode",
+    "xs:element": "XsElementNode",
+    "xs:attribute": "XsAttributeNode",
+    "xs:simpleType": "XsSimpleTypeNode",
+    "xs:complexType": "XsComplexTypeNode",
+    "xs:attributeGroup": "XsAttributeGroupNode",
+    "xs:choice": "XsChoiceNode",
+    "xs:complexContent": "XsComplexContentNode",
+    "xs:enumeration": "XsEnumerationNode",
+    "xs:extension": "XsExtensionNode",
+    "xs:group": "XsGroupNode",
+    "xs:list": "XsListNode",
+    "xs:restriction": "XsRestrictionNode",
+    "xs:sequence": "XsSequenceNode",
+    "xs:simpleContent": "XsSimpleContentNode",
+}
+
 export const tagsInLevelOne = [
     "xs:element", //1
     "#text", // 1
