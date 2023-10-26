@@ -1,3 +1,4 @@
+import { result } from 'lodash'
 import { NodeStorage } from './NodeStorage'
 import { XsNode } from "./XsNode"
 import { TagType } from './types'
@@ -52,7 +53,20 @@ export class XsTree {
         return result
     }
 
+    /**
+     * returns all the instance of tag in the tree as an array
+     * @param {TagType} nodeType 
+     * @returns {Array<Xsnode>}
+     */
+    getAllInstance(nodeType: TagType): Array<XsNode> {
+        const result: Array<XsNode> = []
 
+        this.traverseBF(node => {
+            if (node.Tag === nodeType) result.push(node)
+        })
+
+        return result
+    }
 
 
     getAnTagAllAttributes(nodename: string) {
