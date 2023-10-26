@@ -2,7 +2,7 @@ import { Parser } from "../dist";
 import { readFileSync } from 'fs';
 
 
-const ifcXML4 = readFileSync("test/_attribute.xsd", "utf-8")
+// const ifcXML4 = readFileSync("test/files/_attribute.xsd", "utf-8")
 
 describe("Attribute testing", () => {
 
