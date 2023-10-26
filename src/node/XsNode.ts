@@ -1,77 +1,177 @@
-import { makeid } from "../utils/helpers";
-import { mapToObject } from "../utils/map";
+import { TagType } from "./types";
 import { factory } from "./Factory";
+import { AttributeHandler } from "./AttributeHandler";
+import { elementMapping } from "../constant";
+import { XsTree } from './XsTree';
+import { MyElement } from '../utils/Element';
+import { getAttrsAsMap } from '../utils/helpers';
 
-export class XsNode {
-    public static elements: Map<string, XsNode> = new Map();
-    public static attributes: Map<string, XsNode> = new Map();
-    public static simpleTypes: Map<string, XsNode> = new Map();
-    public static complexTypes: Map<string, XsNode> = new Map();
-
+export abstract class XsNode {
     ///////////////////////////////////
-    protected nodename: string;
-    protected attributes: Map<string, string> = new Map();
-    protected children: Array<XsNode> = [];
-    protected parent: XsNode = null;
-    protected next: XsNode = null;
-    protected prev: XsNode = null;
-    protected siblings: Array<XsNode> = []
+    protected abstract readonly _tag: TagType;
+    protected _attributes: AttributeHandler = new AttributeHandler()
+    protected _children: Array<XsNode> = []
+    protected _parent: XsNode = null
+    protected _root: XsNode = null
+    protected _tree: XsTree = null
 
-    setNode(node: Element): XsNode {
-        this.nodename = node.nodeName;
-        this.extractAttributes(node);
-        this.extractsChildren(node);
+    get Tag(): TagType { return this._tag }
+    /** holds the parent Node */
+    get Parent(): XsNode { return this._parent }
+    /** holds all the attributes belonged to the node */
+    get attribute(): AttributeHandler { return this._attributes }
+    /** holds list of children */
+    get children(): Array<XsNode> { return this._children }
+    /** holds whole tree object */
+    get tree(): XsTree { return this._tree }
 
+    /**
+     * returns an attribute
+     * @param {string} key
+     * @returns {string} 
+     */
+    getAttr(key: string): string { return this.attribute.get(key) }
 
-        return this;
+    /**
+     * stores an attributes in the attributes list
+     * @param {string} key 
+     * @param {string} value 
+     * @returns {this}
+     */
+    setAttr(key: string, value: string): this { this.attribute.set(key, value); return this }
+
+    /**
+     * add a child to the node's children list
+     * @param {XsNode} child 
+     * @returns {this}
+     */
+    add(child: XsNode): this {
+        if (!child || !(child instanceof XsNode)) return this
+        this._children.push(child)
+        child.setParent(this)
+        return this
     }
 
-    private extractAttributes(node: Element) {
-        node.attributes
-        for (let i = 0; i < node.attributes.length; i++) {
-            this.attributes.set(node.attributes[i].name, node.attributes[i].value);
-        }
+    /**
+     * sets parent for current node
+     * @param {XsNode} parent 
+     * @returns {this}
+     */
+    setParent(parent: XsNode): this {
+        if (!parent || !(parent instanceof XsNode)) return this
+        this._parent = parent; return this
     }
 
-    private extractsChildren(node: Element) {
-        if (!node.childNodes) return [];
-        Array.from(node.childNodes).forEach((child: Element) => {
-            switch (child.nodeName) {
-                case "xs:element": this.children.push(this.createXsNode(child, "XsElementNode", XsNode.elements)); break;
-                case "xs:attribute": this.children.push(this.createXsNode(child, "XsAttributeNode", XsNode.attributes)); break;
-                case "xs:simpleType": this.children.push(this.createXsNode(child, "XsSimpleTypeNode", XsNode.simpleTypes)); break;
-                case "xs:complexType": this.children.push(this.createXsNode(child, "XsComplexTypeNode", XsNode.complexTypes)); break;
+    /**
+     * sets a whole tree object inside XsNode in order to have access to tree methods
+     * @param {XsTree} tree 
+     * @returns {this}
+     */
+    setTree(tree: XsTree): this {
+        this._tree = tree
+        this.children.forEach(c => c.setTree(tree))
+        return this
+    }
+    /////////////////////////////////////////////
 
-                case "xs:attributeGroup": this.children.push(this.createXsNode(child, "XsAttributeGroupNode")); break;
-                case "xs:choice": this.children.push(this.createXsNode(child, "XsChoiceNode")); break;
-                case "xs:complexContent": this.children.push(this.createXsNode(child, "XsComplexContentNode")); break;
-                case "xs:enumeration": this.children.push(this.createXsNode(child, "XsEnumerationNode")); break;
-                case "xs:extension": this.children.push(this.createXsNode(child, "XsExtensionNode")); break;
-                case "xs:group": this.children.push(this.createXsNode(child, "XsGroupNode")); break;
-                case "xs:list": this.children.push(this.createXsNode(child, "XsListNode")); break;
-                case "xs:restriction": this.children.push(this.createXsNode(child, "XsRestrictionNode")); break;
-                case "xs:sequence": this.children.push(this.createXsNode(child, "XsSequenceNode")); break;
-                case "xs:simpleContent": this.children.push(this.createXsNode(child, "XsSimpleContentNode")); break;
-                default: () => { }
-            }
-        });
+    /** 
+     * checks if node has any children at all or any children of nodetype, if represented
+     * @param {TagType} nodetype node type to be checkd
+     * @returns {number} it return 0 if node does not have any children or any children of nodeType, if represented
+     * */
+    hasChildren(nodetype?: TagType): number {
+        if (nodetype)
+            return this._children.filter(c => c._tag === nodetype).length;
+        return this._children.length
     }
 
-    private createXsNode(node: Element, elementName: string, map?: Map<string, XsNode>) {
-        const element = factory(elementName).setNode(node);
-        map?.set(element.name || makeid(), element);
-        return element;
+    getChildren<T extends XsNode>(tagType?: TagType): Array<T> {
+        if (!tagType)
+            return this._children as Array<T>;
+        return this._children.filter(c => c.Tag === tagType) as Array<T>;
     }
 
+    /** 
+     * checks if node has any children except the given nodetype
+     * @param {TagType} nodetype node type to be checkd
+     * @returns it return 0 if node does not have any children except given nodetypr
+     * */
+    hasChildrenExcept(nodetype: TagType): number {
+        return this._children.filter(c => c._tag !== nodetype).length;
+    }
+
+    areAllChildren(nodeType: TagType): boolean {
+        return this._children.every(c => c._tag === nodeType);
+    }
+
+
+
+
+    /**
+     * returns the first child, if given nodetype exists then first child whose node type matches with given node type
+     * @param {TagType} nodeType 
+     * @returns {T}
+     */
+    firstChild<T extends XsNode>(nodeType?: TagType): T {
+        if (!nodeType) return this._children[0] as T;
+        return this._children.find(c => c._tag === nodeType) as T;
+    }
+
+    /**
+     * return an json object from the XsNdoe
+     * @returns {Object}
+     */
     toJson(): object {
         return {
-            nodename: this.nodename,
-            attributes: mapToObject(this.attributes),
-            children: this.children.map(child => child.toJson())
+            nodename: this._tag,
+            attributes: this._attributes.toObject(),
+            children: this._children.map(child => child.toJson())
         }
     }
 
-    get name(): string {
-        return this.attributes.get("name");
+
+    traverseBF(callback: (node: XsNode) => void) {
+        const arr: Array<XsNode> = [this]
+        while (arr.length) {
+            const node: XsNode = arr.shift() as XsNode
+            arr.push(...node.children)
+            callback(node)
+        }
+    }
+
+    traverseDF(callback: (node: XsNode) => void) {
+        const arr: Array<XsNode> = [this]
+        while (arr.length) {
+            const node: XsNode = arr.shift() as XsNode
+            arr.unshift(...node.children)
+            callback(node)
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static fromElement(node: Element, parent?: XsNode): XsNode {
+        try {
+            if (["#text", "#comment", "xs:minLength", "xs:maxLength"].includes(node.nodeName)) return undefined
+            const result = factory(elementMapping[node.nodeName])
+            result.setParent(parent)
+
+            getAttrsAsMap(node).forEach((value, key) => result.setAttr(key, value))
+
+            if (node.childNodes)
+                Array.from(node.childNodes).forEach((child: Element) => {
+                    result.add(XsNode.fromElement(child, result))
+                });
+            return result
+        } catch (error) {
+            console.log("XsNode.createXsNode | there is a problem in creating XsNode",
+                node.nodeName, elementMapping[node.nodeName])
+            throw error;
+        }
+
     }
 }

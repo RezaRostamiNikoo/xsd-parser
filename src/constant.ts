@@ -1,3 +1,22 @@
+
+export const elementMapping = {
+    "xs:schema": "XsSchemaNode",
+    "xs:element": "XsElementNode",
+    "xs:attribute": "XsAttributeNode",
+    "xs:simpleType": "XsSimpleTypeNode",
+    "xs:complexType": "XsComplexTypeNode",
+    "xs:attributeGroup": "XsAttributeGroupNode",
+    "xs:choice": "XsChoiceNode",
+    "xs:complexContent": "XsComplexContentNode",
+    "xs:enumeration": "XsEnumerationNode",
+    "xs:extension": "XsExtensionNode",
+    "xs:group": "XsGroupNode",
+    "xs:list": "XsListNode",
+    "xs:restriction": "XsRestrictionNode",
+    "xs:sequence": "XsSequenceNode",
+    "xs:simpleContent": "XsSimpleContentNode",
+}
+
 export const tagsInLevelOne = [
     "xs:element", //1
     "#text", // 1
@@ -176,6 +195,7 @@ const attribute = {
             "xs:ID",
             "xs:IDREF",
             "xs:anyURI",
+            "xs:long",
             "ifc:IfcLabel",
             "ifc:IfcNonNegativeLengthMeasure",
             "ifc:IfcPositiveLengthMeasure",
@@ -388,7 +408,6 @@ const attribute = {
             "ifc:IfcFlowDirectionEnum",
             "ifc:IfcDistributionChamberElementTypeEnum",
             "ifc:IfcDiscreteAccessoryTypeEnum",
-            "xs:long",
             "ifc:IfcDerivedUnitEnum",
             "ifc:IfcDamperTypeEnum",
             "ifc:IfcCurtainWallTypeEnum",
@@ -448,13 +467,13 @@ const attribute = {
             "ifc:itemType"
         ],
         "fixed": [
+            "xs:long",
+            "xs:double",
             "set",
             "ifc:IfcPropertySetDefinition",
             "list",
             "ifc:IfcPositiveInteger",
-            "xs:long",
             "array",
-            "xs:double",
             "ifc:IfcPerson",
             "ifc:IfcWorkTime",
             "list-unique",
