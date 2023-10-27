@@ -14,14 +14,8 @@ export class XsSimpleTypeNode extends XsNode {
     getTsSchema(): ts.TsSchema {
         if (this.hasChildren("xs:list")) {
             const ls = this.firstChild<XsListNode>("xs:list").getTsSchema()
-            if (!this.attribute.name) {
-                if (ls.type === "type" && (ls.definition as ts.TsTypeSchema).usage === "literal")
-                    return ts.makeType((ls.definition as ts.TsTypeSchema).literal); // type literal
-            } else {
-                if (ls.type === "type" && (ls.definition as ts.TsTypeSchema).usage === "definition")
-                    return ts.makeSimpleType((ls.definition as ts.TsTypeReferenceSchema).reference, this.attribute.name); // type literal
-
-            }
+            if (ls.type === "type" && (ls.definition as ts.TsTypeSchema).usage === "literal")
+                return ts.makeType((ls.definition as ts.TsTypeSchema).literal, this.attribute.name); // type literal
         }
         if (this.hasChildren("xs:restriction")) {
             const rs = this.firstChild<XsRestrictionNode>("xs:restriction").getTsSchema();
