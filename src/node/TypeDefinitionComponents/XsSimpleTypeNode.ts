@@ -36,6 +36,6 @@ export class XsSimpleTypeNode extends XsNode {
                 return ts.makeType((rs.definition as ts.TsTypeSchema).literal); // type literal
             }
         }
-        throw new Error("XsSimpleTypeNode.getTsSchema | there is a problem");
+        throw new Error(`XsSimpleTypeNode.getTsSchema | there is a problem\n\n${this.toXml()}`);
     }
 }
