@@ -129,6 +129,22 @@ export abstract class XsNode {
         }
     }
 
+    /**
+     * returns a xml of the node
+     * @returns {string}
+     */
+    toXml(tab: number = 0): string {
+        const result: Array<string> = []
+        const space = tab ? new Array(tab).fill('\t').join('') : ''
+        if (!this.children.length)
+            result.push(`${space}<${this.Tag} ${this.attribute.toText()} />`)
+        else {
+            result.push(`${space}<${this.Tag} ${this.attribute.toText()}>`)
+            result.push(...this.children.map(c => c.toXml(tab + 1)))
+            result.push(`${space}</${this.Tag}>`)
+        }
+        return result.join('\n')
+    }
 
     traverseBF(callback: (node: XsNode) => void) {
         const arr: Array<XsNode> = [this]
