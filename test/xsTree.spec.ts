@@ -1,7 +1,7 @@
 import { XsTree } from '../src'
 import { readFileSync } from 'fs'
 import { DOMParser } from '@xmldom/xmldom'
-
+import { writeFileSync } from 'fs'
 
 describe("XsTree Test File", () => {
 
@@ -21,6 +21,7 @@ describe("XsTree Test File", () => {
 
         expect(tree.rootNode.firstChild("xs:simpleType").firstChild().Tag).toEqual("xs:list")
 
+        writeFileSync('./test/result/test.xml', tree.rootNode.toXml())
     })
 
 
