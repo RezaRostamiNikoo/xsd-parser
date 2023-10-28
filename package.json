@@ -1,9 +1,13 @@
 {
-  "name": "xsd-parser",
+  "name": "ifc-xsd-parser",
   "private": false,
   "version": "0.2.1",
   "main": "dist/index.js",
-  "types": "dist/types/index.d.ts",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/index.js",
+    "dist/index.d.ts"
+  ],
   "scripts": {
     "dev": "webpack serve",
     "build": "webpack",
@@ -32,13 +36,9 @@
     "url": "https://github.com/RezaRostamiNikoo/xsd-parser/issues"
   },
   "homepage": "https://github.com/RezaRostamiNikoo/xsd-parser/blob/master/README.md",
-  "files": [
-    "package.json",
-    "dist"
-  ],
   "dependencies": {
     "@types/lodash": "^4.14.196",
     "@xmldom/xmldom": "^0.8.10",
-    "predefined-ds": "^1.7.2"
+    "write-ts": "^0.2.0"
   }
 }
