@@ -1,4 +1,3 @@
-import { result } from 'lodash'
 import { NodeStorage } from './NodeStorage'
 import { XsNode } from "./XsNode"
 import { TagType } from './types'

@@ -190,4 +190,10 @@ export abstract class XsNode {
         }
 
     }
+
+    /**
+     * returns true if the node has not any children and it is called self-closed
+     * @returns {boolean}
+     */
+    isSelfClosing(): boolean { return this.hasChildren() === 0 ? true : false }
 }
