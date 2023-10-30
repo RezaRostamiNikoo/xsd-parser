@@ -27,6 +27,7 @@ export class NodeStorage {
 
 
     getXsAttributeNode(name: string): XsAttributeNode { return this.attributes.get(name); }
+    getXsAttributeGroupNode(name: string): XsAttributeGroupNode { return this.attributeGroups.get(name); }
 
 
 
