@@ -1,9 +1,11 @@
 /** path */
 const path = require("path");
 
+const libraryName = 'ifc-xsd-parser'
+
 /** @type {import('webpack').Configuration} */
 module.exports = {
-    mode: "none",
+    mode: "production",
     entry: "./src/index.ts",
     module: {
         rules: [
@@ -18,14 +20,30 @@ module.exports = {
     resolve: {
         extensions: [".ts", ".js"],
     },
+    plugins: [
+        function () {
+            this.hooks.done.tap({
+                name: "dts-bundler"
+            }, stats => {
+                var dts = require('dts-bundle');
+                dts.bundle({
+                    name: libraryName,
+                    main: './dist/types/index.d.ts',
+                    out: '../index.d.ts',
+                    removeSource: true,
+                    outputAsModuleFolder: true // to use npm in-package typings
+                });
+            })
+        }
+    ],
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "index.js",
         library: {
             name: {
-                root: 'XsdParser',
-                amd: 'XsdParser',
-                commonjs: 'XsdParser',
+                root: libraryName,
+                amd: libraryName,
+                commonjs: libraryName,
             },
             type: "umd",
         },
