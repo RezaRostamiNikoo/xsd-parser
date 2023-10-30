@@ -4,3 +4,10 @@ export type TsType = {
     itemType?: string,
     enumItems?: Array<string>
 }
+
+export type AttributeType = {
+    name: string,
+    optional: boolean,
+    default: string,
+    type: TsType
+}
