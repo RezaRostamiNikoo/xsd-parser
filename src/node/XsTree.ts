@@ -1,8 +1,10 @@
 import { NodeStorage } from './NodeStorage'
+import { XsSimpleTypeNode } from './TypeDefinitionComponents'
 import { XsNode } from "./XsNode"
 import { TagType } from './types'
 
 export class XsTree {
+
     public static _nodeStorage: NodeStorage = new NodeStorage()
 
     get NodeStorage(): NodeStorage { return XsTree._nodeStorage }
@@ -10,18 +12,25 @@ export class XsTree {
     private _rootNode: XsNode
 
     get rootNode(): XsNode { return this._rootNode }
+
     set rootNode(value: XsNode) { this._rootNode = value }
 
     constructor(rootNode?: XsNode) {
-        if (rootNode) {
-            this.rootNode = rootNode
-            this.rootNode.setTree(this)
-        }
+        if (rootNode) this.setRootNode(rootNode)
     }
 
     setRootNode(value: XsNode): this {
         this.rootNode = value
+        this.rootNode.setTree(this)
+        this.fillNodeStorage()
         return this
+    }
+
+    fillNodeStorage() {
+        this.NodeStorage.reset()
+        this.rootNode.getChildren().forEach(node => {
+            this.NodeStorage.add(node)
+        })
     }
 
     traverseBF(callback: (node: XsNode) => void) {
@@ -57,11 +66,11 @@ export class XsTree {
      * @param {TagType} nodeType 
      * @returns {Array<Xsnode>}
      */
-    getAllInstance(nodeType: TagType): Array<XsNode> {
-        const result: Array<XsNode> = []
+    getAllInstance<T extends XsNode = XsNode>(nodeType: TagType): Array<T> {
+        const result: Array<T> = []
 
         this.traverseBF(node => {
-            if (node.Tag === nodeType) result.push(node)
+            if (node.Tag === nodeType) result.push(node as T)
         })
 
         return result

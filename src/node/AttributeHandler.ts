@@ -1,14 +1,15 @@
+import { normalizingName } from '../utils';
 import { mapToObject } from "../utils/map";
 
 export class AttributeHandler {
     private _attrs: Map<string, string> = new Map()
 
     set(key: string, value: string): this {
-        this._attrs.set(key, value)
+        this._attrs.set(normalizingName(key), normalizingName(value))
         return this
     }
 
-    get(key: string): string { return this._attrs.get(key); }
+    get(key: string): string { return this._attrs.get(normalizingName(key)) }
 
     get name(): string { return this._attrs.get('name') }
     get ref(): string { return this._attrs.get('ref') }

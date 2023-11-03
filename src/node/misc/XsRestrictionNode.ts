@@ -1,21 +1,46 @@
 import { XsNode } from "../XsNode";
 import { XsSimpleTypeNode } from "../TypeDefinitionComponents/XsSimpleTypeNode";
-import * as ts from "../../typescriptDefinitions";
 import { XsEnumerationNode } from "./XsEnumerationNode";
 import { TagType } from "../types";
+import { RestrictionDefType } from '../../types';
 
 export class XsRestrictionNode extends XsNode {
     _tag: TagType = "xs:restriction";
 
-    getTsSchema(): ts.TsSchema {
-        if (!this.hasChildren())
-            return ts.makeTypeReference(this._attributes.get("base")); // type reference
-        if (this.hasChildren("xs:enumeration"))
-            return ts.makeEnumItems(
-                this.getChildren("xs:enumeration").map(e => (e as XsEnumerationNode).getValue())); // enum items
-        if (this.hasChildren("xs:simpleType")) {
-            const ss = this.firstChild<XsSimpleTypeNode>("xs:simpleType").getTsSchema();
-            return ts.makeType((ss.definition as ts.TsTypeSchema).literal); // type literal
+
+    getBase(): string { return this.attribute.get('base') }
+
+    isEnum(): boolean {
+        if (!this.hasChildren("xs:enumeration")) return false
+        if (this.hasChildrenExcept("xs:enumeration")) throw new Error(`XsRestrictionNode.isEnum | it should not have any child except "xs:enumeration"\n${this.toXml()}`)
+        return true
+    }
+    isSimpleType(): boolean {
+        if (!this.hasChildren("xs:simpleType")) return false
+        if (this.hasChildrenExcept("xs:simpleType")) throw new Error(`XsRestrictionNode.isSimpleType | it should not have any child except "xs:simpleType"\n${this.toXml()}`)
+        return true
+    }
+
+    getEnumItems(): Array<string> {
+        return this.getChildren("xs:enumeration").map(e => (e as XsEnumerationNode).getValue())
+    }
+
+    private definition: RestrictionDefType;
+
+    getDefinition(): RestrictionDefType {
+        if (this.definition) return this.definition
+        if (this.isSelfClosing() || this.hasChildren("xs:sequence"))
+            return this.definition = {
+                type: "type",
+                itemType: this.attribute.get("base"),
+            }
+        if (this.isEnum())
+            return this.definition = {
+                type: "enum",
+                enumItems: this.getChildren("xs:enumeration").map(e => (e as XsEnumerationNode).getValue())
+            }
+        if (this.isSimpleType()) {
+            return this.definition = this.firstChild<XsSimpleTypeNode>("xs:simpleType").getDefinition()
         }
 
         throw new Error("XsRestrictionNode.getTsSchema | there is a problem");

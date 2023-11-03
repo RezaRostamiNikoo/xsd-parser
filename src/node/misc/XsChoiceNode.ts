@@ -1,4 +1,5 @@
-import * as ts from "../../typescriptDefinitions";
+import { ChoiceDefType } from '../../types';
+import { XsElementNode } from '../DeclarationComponents';
 import { XsNode } from "../XsNode";
 import { TagType } from "../types";
 
@@ -6,8 +7,13 @@ import { TagType } from "../types";
 export class XsChoiceNode extends XsNode {
     _tag: TagType = "xs:choice";
 
-    getTsSchema(): ts.TsSchema {
-        return ts.makeUnionType(this._children.map((e) => e.attribute.get("name")));
+    private definition: ChoiceDefType;
+
+    getDefinition(): ChoiceDefType {
+        if (this.definition) return this.definition
+        return this.definition = {
+            elements: this.getChildren<XsElementNode>('xs:element').map(e => e.getDefinition())
+        }
     }
 
 }

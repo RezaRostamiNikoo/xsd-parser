@@ -3,13 +3,12 @@ import { factory } from "./Factory";
 import { AttributeHandler } from "./AttributeHandler";
 import { elementMapping } from "../constant";
 import { XsTree } from './XsTree';
-import { MyElement } from '../utils/Element';
 import { getAttrsAsMap } from '../utils/helpers';
 
 export abstract class XsNode {
     ///////////////////////////////////
     protected abstract readonly _tag: TagType;
-    protected _attributes: AttributeHandler = new AttributeHandler()
+    private _attributes: AttributeHandler = new AttributeHandler()
     protected _children: Array<XsNode> = []
     protected _parent: XsNode = null
     protected _root: XsNode = null
@@ -195,5 +194,5 @@ export abstract class XsNode {
      * returns true if the node has not any children and it is called self-closed
      * @returns {boolean}
      */
-    isSelfClosing(): boolean { return this.hasChildren() === 0 ? true : false }
+    isSelfClosing(): boolean { return this._children.length > 0 ? false : true }
 }

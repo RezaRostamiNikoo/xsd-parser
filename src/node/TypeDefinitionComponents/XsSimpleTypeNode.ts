@@ -2,10 +2,9 @@ import { XsListNode } from "../misc/XsListNode";
 import { XsNode } from "../XsNode";
 import { XsRestrictionNode } from "../misc/XsRestrictionNode";
 import { TagType } from "../types";
-import { TsSchema, TsTypeSchema, makeArrayType, makeEnumDefinition, makeSimpleType, makeType } from '../../typescriptDefinitions';
-import { TypeGenerator, createArrayTypeNode, createIdentifier, createTypeReferenceNode } from 'write-ts';
-import * as ts from 'typescript';
-import { TsType } from '../../types';
+import { SimpleDefType } from '../../types';
+import { ClassGenerator, EnumGenerator, TypeLiteralGenerator, createArrayTypeNode, createTypeReferenceNode } from 'write-ts';
+import { TypeNode } from 'typescript';
 
 export class XsSimpleTypeNode extends XsNode {
     _tag: TagType = "xs:simpleType";
@@ -29,31 +28,68 @@ export class XsSimpleTypeNode extends XsNode {
         return true
     }
 
-    getTsType(): TsType {
+    private definition: SimpleDefType;
+
+    getDefinition(): SimpleDefType {
+        if (this.definition) return this.definition
+
         if (this.attribute.name) {
             if (this.list_Wise()) {
-                return {
+                return (this.definition = {
                     type: "arrayType",
                     identifier: this.attribute.name,
                     itemType: this.firstChild<XsListNode>("xs:list").itemType()
-                }
+                })
             } else if (this.restriction_Wise()) {
-                return {
+                return (this.definition = {
                     identifier: this.attribute.name,
-                    ...this.firstChild<XsRestrictionNode>("xs:restriction").getTsType()
-                }
+                    ...this.firstChild<XsRestrictionNode>("xs:restriction").getDefinition()
+                })
             }
         } else {
             if (this.list_Wise()) {
-                return {
+                return (this.definition = {
                     type: "arrayType",
                     itemType: this.firstChild<XsListNode>("xs:list").itemType()
-                }
+                })
             } else if (this.restriction_Wise()) {
-                return this.firstChild<XsRestrictionNode>("xs:restriction").getTsType()
+                return (this.definition = this.firstChild<XsRestrictionNode>("xs:restriction").getDefinition())
             }
         }
 
         throw new Error(`XsSimpleTypeNode.getTsSchema | there is a problem\n\n${this.toXml()}`);
+    }
+
+    toTypeNode(): TypeNode {
+        const def = this.getDefinition()
+        if (def.type === "enum" || def.identifier) throw new Error("Converter.simpleDefToLiteral | proble")
+        const lt = new TypeLiteralGenerator()
+        if (def.type === "arrayType")
+            lt.addProperty('_simple_value', createArrayTypeNode(createTypeReferenceNode(def.itemType)))
+        else
+            lt.addProperty('_simple_value', createTypeReferenceNode(def.itemType))
+
+        return lt.generate()
+    }
+
+    toClass(): ClassGenerator {
+        const def = this.getDefinition()
+        if (def.type === "enum" || !def.identifier) throw new Error("Converter.simpleDefToClass | proble")
+        const result = new ClassGenerator(def.identifier)
+        result.Modifiers.export()
+        const p = result.addProperty('_simple_value')
+        if (def.type === "arrayType")
+            p.setType(createArrayTypeNode(createTypeReferenceNode(def.itemType)))
+        else p.setType(createTypeReferenceNode(def.itemType))
+        return result
+    }
+
+    toEnum(): EnumGenerator {
+        const def = this.getDefinition()
+        if (def.type !== "enum" || !def.identifier) throw new Error("Converter.simpleDefToEnum | proble")
+        const result = new EnumGenerator(def.identifier)
+        result.Modifiers.export()
+        def.enumItems.forEach(e => result.addMember(e.toUpperCase()))
+        return result
     }
 }

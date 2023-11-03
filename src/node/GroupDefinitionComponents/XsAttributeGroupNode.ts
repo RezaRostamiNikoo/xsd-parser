@@ -1,5 +1,4 @@
 import { AttributeDefType } from '../../types';
-import { ITsDefinitionSchema } from "../../typescriptDefinitions";
 import { XsAttributeNode } from '../DeclarationComponents';
 import { XsNode } from "../XsNode";
 import { TagType } from "../types";
@@ -7,15 +6,19 @@ import { TagType } from "../types";
 export class XsAttributeGroupNode extends XsNode {
     _tag: TagType = "xs:attributeGroup";
 
-    getName(): string { return this._attributes.get("name"); }
-    getRef(): string { return this._attributes.get("ref"); }
+    getName(): string { return this.attribute.get("name"); }
+    getRef(): string { return this.attribute.get("ref"); }
 
-    getDefinitions(): Array<AttributeDefType> {
+
+    private definition: Array<AttributeDefType>;
+
+    getDefinition(): Array<AttributeDefType> {
+        if (this.definition) return this.definition
         if (this.isSelfClosing && this.getRef()) {
             const ag = this.tree.NodeStorage.getXsAttributeGroupNode(this.getRef())
-            if (ag) return ag.getDefinitions()
+            if (ag) return this.definition = ag.getDefinition()
         } else if (!this.isSelfClosing() && this.getName()) {
-            return this.getChildren<XsAttributeNode>("xs:attribute")
+            return this.definition = this.getChildren<XsAttributeNode>("xs:attribute")
                 .map(attr => attr.getDefinition())
         }
 

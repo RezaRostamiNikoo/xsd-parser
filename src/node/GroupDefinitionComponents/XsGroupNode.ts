@@ -1,20 +1,39 @@
-import * as ts from "../../typescriptDefinitions";
 import { XsChoiceNode } from "../misc/XsChoiceNode";
 import { XsNode } from "../XsNode";
 import { TagType } from "../types";
+import { GroupDefType } from '../../types';
+import { TypeNode, TypeReferenceNode } from 'typescript';
+import { createTypeReferenceNode, createUnionTypeNode } from 'write-ts';
 
 export class XsGroupNode extends XsNode {
     _tag: TagType = "xs:group";
 
-    getTsSchema(): ts.TsSchema {
-        if (!this.hasChildren() && this._attributes.get("ref"))
-            return ts.makeTypeReference(this._attributes.get("ref"));
-        if (!this.hasChildrenExcept("xs:choice") && this.getAttr("name")) {
-            const choice: XsChoiceNode = this.firstChild("xs:choice");
-            const tsdefinition = choice.getTsSchema();
-            const df = tsdefinition.definition as ts.TsTypeUnionLiteral;
-            return ts.makeUnionType(df.items, this._attributes.get("name"));
+    private definition: GroupDefType;
+
+    getDefinition(): GroupDefType {
+        if (this.definition) return this.definition
+        if (!this.hasChildren() && this.attribute.get("ref")) {
+            return this.definition = { ref: this.attribute.get("ref") }
+        }
+        if (!this.hasChildrenExcept("xs:choice") && this.attribute.name) {
+            return this.definition = {
+                name: this.attribute.name,
+                choices: this.firstChild<XsChoiceNode>("xs:choice").getDefinition()
+            }
         }
         throw new Error("XsGroupNode.toTsDefinition | Group has a ptoblem");
+    }
+
+    toTypeNode(): TypeNode {
+        const def = this.getDefinition()
+        if (def.ref) return createTypeReferenceNode(def.ref)
+        const unions: TypeReferenceNode[] = []
+        def.choices?.elements?.forEach(e => {
+            if (e.complexType) {
+                // unions.push(this.complexDefToLiteral())
+            }
+            else unions.push(createTypeReferenceNode(e.primitiveType || e.type))
+        })
+        return createUnionTypeNode(...unions)
     }
 }

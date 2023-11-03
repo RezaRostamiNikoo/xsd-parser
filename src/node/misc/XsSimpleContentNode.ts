@@ -1,24 +1,17 @@
-import { ITsSchema, ITsTypeSchema } from "../../typescriptDefinitions";
 import { XsNode } from "../XsNode";
-import { XsRestrictionNode } from "./XsRestrictionNode";
 import { TagType } from "../types";
+import { XsExtensionNode } from './XsExtensionNode';
+import { SimpleContentDefType } from '../../types';
 
 export class XsSimpleContentNode extends XsNode {
     _tag: TagType = "xs:simpleContent";
 
-    getTsSchema(): ITsSchema {
-        if (this.hasChildren("xs:restriction")) {
-            const rs = this.firstChild<XsRestrictionNode>("xs:restriction").getTsSchema();
-            if (rs.type === "type" && (rs.definition as ITsTypeSchema).usage === "literal") return rs;
-            else if (rs.type === "reference") return rs;
-        } else if (this.hasChildren("xs:extension")) {
-            throw new Error("asdasdasdasdasdasdsd")
+    private definition: SimpleContentDefType;
+
+    getDefinition(): SimpleContentDefType {
+        if (this.definition) return this.definition
+        return this.definition = {
+            extension: this.getChildren<XsExtensionNode>("xs:extension")[0].getDefinition()
         }
-
-        throw new Error("XsComplexContentNode.getTsSchema | ");
-
-
     }
-
-
 }
