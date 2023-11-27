@@ -1,4 +1,3 @@
-import * as ts from "../../typescriptDefinitions";
 import { XsNode } from "../XsNode";
 import { TagType } from "../types";
 

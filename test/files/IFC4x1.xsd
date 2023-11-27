@@ -4861,7 +4861,7 @@ of the material. The information contained in this document is subject to change
 		<xs:complexContent>
 			<xs:extension base="ifc:Entity">
 				<xs:sequence>
-					<xs:element name="MaterialClassifications">
+					<xs:element name="MaterialClassifications" maxOccurs="unbounded">
 						<xs:complexType>
 							<xs:group ref="ifc:IfcClassificationSelect" maxOccurs="unbounded" />
 							<xs:attribute ref="ifc:itemType" fixed="ifc:IfcClassificationSelect" />

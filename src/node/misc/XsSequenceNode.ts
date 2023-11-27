@@ -1,7 +1,9 @@
+import { TypeNode } from 'typescript';
 import { SequenceDefType } from '../../types';
 import { XsElementNode } from "../DeclarationComponents";
 import { XsNode } from "../XsNode";
 import { TagType } from "../types";
+import { createArrayTypeNode, createTypeReferenceNode } from 'write-ts';
 
 
 export class XsSequenceNode extends XsNode {
@@ -20,3 +22,4 @@ export class XsSequenceNode extends XsNode {
     }
 
 }
+

@@ -3,6 +3,7 @@ import { XsSimpleTypeNode } from "../TypeDefinitionComponents/XsSimpleTypeNode";
 import { XsEnumerationNode } from "./XsEnumerationNode";
 import { TagType } from "../types";
 import { RestrictionDefType } from '../../types';
+import { createTypeReferenceNode } from 'write-ts';
 
 export class XsRestrictionNode extends XsNode {
     _tag: TagType = "xs:restriction";
@@ -31,12 +32,12 @@ export class XsRestrictionNode extends XsNode {
         if (this.definition) return this.definition
         if (this.isSelfClosing() || this.hasChildren("xs:sequence"))
             return this.definition = {
-                type: "type",
-                itemType: this.attribute.get("base"),
+                defType: "type",
+                type: createTypeReferenceNode(this.attribute.get("base"))
             }
         if (this.isEnum())
             return this.definition = {
-                type: "enum",
+                defType: "enum",
                 enumItems: this.getChildren("xs:enumeration").map(e => (e as XsEnumerationNode).getValue())
             }
         if (this.isSimpleType()) {

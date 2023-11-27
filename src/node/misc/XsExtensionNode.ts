@@ -25,15 +25,22 @@ export class XsExtensionNode extends XsNode {
         }
         if (this.isSelfClosing()) return this.definition = result
 
+
         result.elements = this.getChildren<XsChoiceNode>("xs:choice")
-            .flatMap(s => s.getDefinition().elements.map(e => ({ optional: true, element: e })))
+            .flatMap(s => s.getDefinition().elements)
 
-        result.elements = this.getChildren<XsSequenceNode>("xs:sequence")
-            .flatMap(s => s.getDefinition().elements.map(e => ({ optional: false, element: e })))
-
+        result.elements.push(...this.getChildren<XsSequenceNode>("xs:sequence")
+            .flatMap(s => s.getDefinition().elements)
+        )
         result.attributes = this.getAttributeDefs()
 
         return this.definition = result
 
     }
+
+    to() {
+        const def = this.getDefinition()
+    }
+
+
 }

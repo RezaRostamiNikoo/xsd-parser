@@ -1,29 +1,35 @@
+import { TypeNode } from 'typescript'
+
 export type SimpleDefType = {
-    type: "enum" | "type" | "arrayType",
+    defType: "enum" | "type" | "arrayType",
     identifier?: string,
-    itemType?: string,
+    type?: TypeNode,
     enumItems?: Array<string>
 }
-
+export type RestrictionDefType = {
+    defType: "enum" | "type" | "arrayType",
+    identifier?: string,
+    type?: TypeNode,
+    enumItems?: Array<string>
+}
 export type AttributeDefType = {
     name: string,
     optional?: boolean,
     default?: string,
-    type?: string
-    simpleType?: SimpleDefType
+    type?: TypeNode
 }
 
 export type ExtensionDefType = {
     base: string
     attributes?: Array<AttributeDefType>,
-    elements?: Array<{ optional: boolean, element: ElementDefType }>
+    elements?: Array<ElementDefType>
 }
 
 export type ElementDefType = {
+    optional: boolean
+    isArray: boolean
     name: string
-    type?: string
-    complexType?: ComplexDefType
-    primitiveType?: string
+    type: TypeNode
 }
 
 export type ChoiceDefType = {
@@ -34,26 +40,20 @@ export type SequenceDefType = {
     elements: Array<ElementDefType>
 }
 
-export type RestrictionDefType = {
-    type: "enum" | "type" | "arrayType",
-    identifier?: string,
-    itemType?: string,
-    enumItems?: Array<string>
-}
+
 
 export type ComplexDefType = {
     identifier?: string
     attributes?: Array<AttributeDefType>
-    seqences?: Array<SequenceDefType>
+    sequences?: Array<SequenceDefType>
     complexContent?: ComplexContentDefType
     simpleContent?: SimpleContentDefType
     groups?: Array<GroupDefType>
 }
 
 export type GroupDefType = {
-    ref?: string
     name?: string
-    choices?: ChoiceDefType
+    type?: TypeNode
 }
 
 export type SimpleContentDefType = {

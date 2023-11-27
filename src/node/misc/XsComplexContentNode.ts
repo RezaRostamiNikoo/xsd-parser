@@ -18,4 +18,13 @@ export class XsComplexContentNode extends XsNode {
             extension: this.getChildren<XsExtensionNode>("xs:extension")?.[0]?.getDefinition()
         }
     }
+
+
+    toLiteral() {
+        const def = this.getDefinition()
+    }
+
+    toClass() {
+
+    }
 }

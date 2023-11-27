@@ -36,9 +36,9 @@ export class XsSimpleTypeNode extends XsNode {
         if (this.attribute.name) {
             if (this.list_Wise()) {
                 return (this.definition = {
-                    type: "arrayType",
+                    defType: "arrayType",
                     identifier: this.attribute.name,
-                    itemType: this.firstChild<XsListNode>("xs:list").itemType()
+                    type: createArrayTypeNode(createTypeReferenceNode(this.firstChild<XsListNode>("xs:list").itemType()))
                 })
             } else if (this.restriction_Wise()) {
                 return (this.definition = {
@@ -49,8 +49,8 @@ export class XsSimpleTypeNode extends XsNode {
         } else {
             if (this.list_Wise()) {
                 return (this.definition = {
-                    type: "arrayType",
-                    itemType: this.firstChild<XsListNode>("xs:list").itemType()
+                    defType: "arrayType",
+                    type: createArrayTypeNode(createTypeReferenceNode(this.firstChild<XsListNode>("xs:list").itemType()))
                 })
             } else if (this.restriction_Wise()) {
                 return (this.definition = this.firstChild<XsRestrictionNode>("xs:restriction").getDefinition())
@@ -62,31 +62,31 @@ export class XsSimpleTypeNode extends XsNode {
 
     toTypeNode(): TypeNode {
         const def = this.getDefinition()
-        if (def.type === "enum" || def.identifier) throw new Error("Converter.simpleDefToLiteral | proble")
+        if (def.defType === "enum" || def.identifier) throw new Error("Converter.simpleDefToLiteral | proble")
         const lt = new TypeLiteralGenerator()
-        if (def.type === "arrayType")
-            lt.addProperty('_simple_value', createArrayTypeNode(createTypeReferenceNode(def.itemType)))
+        if (def.defType === "arrayType")
+            lt.addProperty('_simple_value', createArrayTypeNode(def.type))
         else
-            lt.addProperty('_simple_value', createTypeReferenceNode(def.itemType))
+            lt.addProperty('_simple_value', def.type)
 
         return lt.generate()
     }
 
     toClass(): ClassGenerator {
         const def = this.getDefinition()
-        if (def.type === "enum" || !def.identifier) throw new Error("Converter.simpleDefToClass | proble")
+        if (def.defType === "enum" || !def.identifier) throw new Error("Converter.simpleDefToClass | proble")
         const result = new ClassGenerator(def.identifier)
         result.Modifiers.export()
         const p = result.addProperty('_simple_value')
-        if (def.type === "arrayType")
-            p.setType(createArrayTypeNode(createTypeReferenceNode(def.itemType)))
-        else p.setType(createTypeReferenceNode(def.itemType))
+        if (def.defType === "arrayType")
+            p.setType(createArrayTypeNode(def.type))
+        else p.setType(def.type)
         return result
     }
 
     toEnum(): EnumGenerator {
         const def = this.getDefinition()
-        if (def.type !== "enum" || !def.identifier) throw new Error("Converter.simpleDefToEnum | proble")
+        if (def.defType !== "enum" || !def.identifier) throw new Error("Converter.simpleDefToEnum | proble")
         const result = new EnumGenerator(def.identifier)
         result.Modifiers.export()
         def.enumItems.forEach(e => result.addMember(e.toUpperCase()))

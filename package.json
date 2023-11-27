@@ -40,6 +40,6 @@
   "dependencies": {
     "@types/lodash": "^4.14.196",
     "@xmldom/xmldom": "^0.8.10",
-    "write-ts": "^0.4.0"
+    "write-ts": "^0.5.0"
   }
 }

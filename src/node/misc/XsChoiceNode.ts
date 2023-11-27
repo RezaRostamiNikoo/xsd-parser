@@ -12,7 +12,8 @@ export class XsChoiceNode extends XsNode {
     getDefinition(): ChoiceDefType {
         if (this.definition) return this.definition
         return this.definition = {
-            elements: this.getChildren<XsElementNode>('xs:element').map(e => e.getDefinition())
+            elements: this.getChildren<XsElementNode>('xs:element')
+                .map(e => ({ ...e.getDefinition(), optional: true }))
         }
     }
 
